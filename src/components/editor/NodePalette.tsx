@@ -1,210 +1,203 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Smartphone, 
-  Monitor, 
-  Tablet, 
-  MousePointer, 
-  Square, 
-  Type, 
-  Image, 
-  Menu,
-  Plus
-} from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus } from 'lucide-react';
 
 interface NodePaletteProps {
   onAddNode: (type: string, data: any) => void;
 }
 
 export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
-  const [activeCategory, setActiveCategory] = useState<'screens' | 'components'>('screens');
+  const [activeCategory, setActiveCategory] = useState<'agents' | 'data'>('agents');
 
-  const screenTemplates = [
+  const agentTemplates = [
     {
-      id: 'mobile-screen',
-      label: 'Mobile Screen',
-      icon: Smartphone,
+      id: 'chatbot-agent',
+      label: 'Chat Assistant',
+      icon: MessageSquare,
+      description: 'Assistente conversacional',
+      color: 'text-blue-600',
       data: {
-        label: 'Tela Mobile',
-        screenType: 'mobile',
-        width: 375,
-        height: 812
+        label: 'Chat Assistant',
+        agentType: 'chatbot',
+        model: 'GPT-4',
+        temperature: 0.7,
+        instructions: 'Assistente conversacional para suporte ao cliente'
       }
     },
     {
-      id: 'desktop-screen',
-      label: 'Desktop Screen',
-      icon: Monitor,
+      id: 'analyzer-agent',
+      label: 'Data Analyzer',
+      icon: Brain,
+      description: 'Análise de dados',
+      color: 'text-purple-600',
       data: {
-        label: 'Tela Desktop',
-        screenType: 'desktop',
-        width: 1440,
-        height: 900
+        label: 'Data Analyzer',
+        agentType: 'analyzer',
+        model: 'Claude-3',
+        temperature: 0.3,
+        instructions: 'Analisa e processa dados estruturados'
       }
     },
     {
-      id: 'tablet-screen',
-      label: 'Tablet Screen',
-      icon: Tablet,
+      id: 'retriever-agent',
+      label: 'Info Retriever',
+      icon: Search,
+      description: 'Busca informações',
+      color: 'text-green-600',
       data: {
-        label: 'Tela Tablet',
-        screenType: 'tablet',
-        width: 768,
-        height: 1024
+        label: 'Info Retriever',
+        agentType: 'retriever',
+        model: 'Embedding Model',
+        temperature: 0.1,
+        instructions: 'Busca e recupera informações relevantes'
+      }
+    },
+    {
+      id: 'generator-agent',
+      label: 'Content Generator',
+      icon: Zap,
+      description: 'Gera conteúdo',
+      color: 'text-orange-600',
+      data: {
+        label: 'Content Generator',
+        agentType: 'generator',
+        model: 'GPT-4',
+        temperature: 0.8,
+        instructions: 'Gera conteúdo criativo e original'
       }
     }
   ];
 
-  const componentTemplates = [
+  const dataTemplates = [
     {
-      id: 'button-component',
-      label: 'Botão',
-      icon: MousePointer,
+      id: 'input-data',
+      label: 'User Input',
+      icon: FileText,
+      description: 'Entrada do usuário',
+      color: 'text-blue-600',
       data: {
-        label: 'Botão',
-        componentType: 'button',
-        properties: {
-          text: 'Clique aqui',
-          width: 120,
-          height: 40,
-          color: '#D72638'
-        }
+        label: 'User Input',
+        dataType: 'input',
+        format: 'text/plain'
       }
     },
     {
-      id: 'input-component',
-      label: 'Input',
-      icon: Square,
+      id: 'output-data',
+      label: 'Agent Output',
+      icon: FileText,
+      description: 'Saída do agente',
+      color: 'text-green-600',
       data: {
-        label: 'Campo de Input',
-        componentType: 'input',
-        properties: {
-          text: 'Digite aqui...',
-          width: 200,
-          height: 40
-        }
+        label: 'Agent Output',
+        dataType: 'output',
+        format: 'text/plain'
       }
     },
     {
-      id: 'text-component',
-      label: 'Texto',
-      icon: Type,
+      id: 'database-data',
+      label: 'Knowledge Base',
+      icon: Database,
+      description: 'Base de conhecimento',
+      color: 'text-purple-600',
       data: {
-        label: 'Texto',
-        componentType: 'text',
-        properties: {
-          text: 'Lorem ipsum dolor sit amet',
-          width: 200,
-          height: 'auto'
-        }
+        label: 'Knowledge Base',
+        dataType: 'database',
+        format: 'vector/embeddings'
       }
     },
     {
-      id: 'image-component',
-      label: 'Imagem',
-      icon: Image,
+      id: 'api-data',
+      label: 'External API',
+      icon: Code,
+      description: 'Serviço externo',
+      color: 'text-orange-600',
       data: {
-        label: 'Imagem',
-        componentType: 'image',
-        properties: {
-          width: 200,
-          height: 150,
-          text: 'placeholder.jpg'
-        }
-      }
-    },
-    {
-      id: 'container-component',
-      label: 'Container',
-      icon: Menu,
-      data: {
-        label: 'Container',
-        componentType: 'container',
-        properties: {
-          width: 300,
-          height: 200
-        }
+        label: 'External API',
+        dataType: 'api',
+        format: 'application/json'
       }
     }
   ];
 
   const handleAddNode = (template: any) => {
-    if (activeCategory === 'screens') {
-      onAddNode('screen', template.data);
+    if (activeCategory === 'agents') {
+      onAddNode('agent', template.data);
     } else {
-      onAddNode('component', template.data);
+      onAddNode('data', template.data);
     }
   };
 
   return (
-    <Card className="w-64 h-full bg-card border-border">
+    <Card className="w-80 h-full bg-card border-border">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <Plus className="w-5 h-5 text-primary" />
-          Paleta de Nós
+          <Bot className="w-5 h-5 text-primary" />
+          Agentes de IA
         </CardTitle>
         
         <div className="flex rounded-lg bg-muted p-1">
           <Button
-            variant={activeCategory === 'screens' ? 'default' : 'ghost'}
+            variant={activeCategory === 'agents' ? 'default' : 'ghost'}
             size="sm"
             className="flex-1 text-xs"
-            onClick={() => setActiveCategory('screens')}
+            onClick={() => setActiveCategory('agents')}
           >
-            Telas
+            <Brain className="w-3 h-3 mr-1" />
+            Agentes
           </Button>
           <Button
-            variant={activeCategory === 'components' ? 'default' : 'ghost'}
+            variant={activeCategory === 'data' ? 'default' : 'ghost'}
             size="sm"
             className="flex-1 text-xs"
-            onClick={() => setActiveCategory('components')}
+            onClick={() => setActiveCategory('data')}
           >
-            Componentes
+            <Database className="w-3 h-3 mr-1" />
+            Dados
           </Button>
         </div>
       </CardHeader>
 
       <CardContent className="p-3 space-y-2">
-        {activeCategory === 'screens' && (
+        {activeCategory === 'agents' && (
           <>
             <div className="text-xs font-medium text-muted-foreground mb-3">
-              Adicione telas para o seu fluxo
+              Adicione agentes de IA ao seu fluxo
             </div>
-            {screenTemplates.map((template) => (
+            {agentTemplates.map((template) => (
               <Button
                 key={template.id}
                 variant="outline"
-                className="w-full justify-start h-12 bg-card hover:bg-accent"
+                className="w-full justify-start h-auto p-3 bg-card hover:bg-accent text-left"
                 onClick={() => handleAddNode(template)}
               >
-                <template.icon className="w-4 h-4 mr-3 text-primary" />
-                <div className="text-left">
+                <template.icon className={`w-4 h-4 mr-3 ${template.color} flex-shrink-0`} />
+                <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium">{template.label}</div>
-                  <div className="text-xs text-muted-foreground font-mono">
-                    {template.data.width} × {template.data.height}
-                  </div>
+                  <div className="text-xs text-muted-foreground">{template.description}</div>
                 </div>
               </Button>
             ))}
           </>
         )}
 
-        {activeCategory === 'components' && (
+        {activeCategory === 'data' && (
           <>
             <div className="text-xs font-medium text-muted-foreground mb-3">
-              Componentes de interface
+              Fontes de dados e APIs
             </div>
-            {componentTemplates.map((template) => (
+            {dataTemplates.map((template) => (
               <Button
                 key={template.id}
                 variant="outline"
-                className="w-full justify-start h-10 bg-card hover:bg-accent"
+                className="w-full justify-start h-auto p-3 bg-card hover:bg-accent text-left"
                 onClick={() => handleAddNode(template)}
               >
-                <template.icon className="w-4 h-4 mr-3" />
-                <span className="text-sm">{template.label}</span>
+                <template.icon className={`w-4 h-4 mr-3 ${template.color} flex-shrink-0`} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium">{template.label}</div>
+                  <div className="text-xs text-muted-foreground">{template.description}</div>
+                </div>
               </Button>
             ))}
           </>

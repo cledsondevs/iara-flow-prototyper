@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { X, Settings, Palette, Type } from 'lucide-react';
-import { ScreenNodeData, ComponentNodeData } from './NodeTypes';
+import { AgentNodeData, DataNodeData } from './NodeTypes';
 
 interface PropertiesPanelProps {
   node: Node;
@@ -17,28 +17,14 @@ interface PropertiesPanelProps {
 export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanelProps) => {
   const [activeTab, setActiveTab] = useState<'properties' | 'style'>('properties');
 
-  const isScreenNode = node.type === 'screen';
-  const isComponentNode = node.type === 'component';
+  const isAgentNode = node.type === 'agent';
+  const isDataNode = node.type === 'data';
 
-  const screenData = isScreenNode ? (node.data as unknown as ScreenNodeData) : null;
-  const componentData = isComponentNode ? (node.data as unknown as ComponentNodeData) : null;
+  const agentData = isAgentNode ? (node.data as unknown as AgentNodeData) : null;
+  const dataData = isDataNode ? (node.data as unknown as DataNodeData) : null;
 
   const handleInputChange = (field: string, value: any) => {
-    if (isScreenNode) {
-      onUpdateNode(node.id, { [field]: value });
-    } else if (isComponentNode) {
-      if (field.startsWith('properties.')) {
-        const propField = field.replace('properties.', '');
-        onUpdateNode(node.id, {
-          properties: {
-            ...componentData?.properties,
-            [propField]: value
-          }
-        });
-      } else {
-        onUpdateNode(node.id, { [field]: value });
-      }
-    }
+    onUpdateNode(node.id, { [field]: value });
   };
 
   return (
@@ -47,7 +33,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Settings className="w-5 h-5 text-primary" />
-            Propriedades
+            Propriedades do Agente
           </CardTitle>
           <Button
             variant="ghost"
@@ -67,7 +53,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
             onClick={() => setActiveTab('properties')}
           >
             <Settings className="w-3 h-3 mr-1" />
-            Geral
+            Configuração
           </Button>
           <Button
             variant={activeTab === 'style' ? 'default' : 'ghost'}
@@ -76,7 +62,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
             onClick={() => setActiveTab('style')}
           >
             <Palette className="w-3 h-3 mr-1" />
-            Estilo
+            Parâmetros
           </Button>
         </div>
       </CardHeader>
@@ -88,45 +74,70 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
             <div className="space-y-3">
               <div>
                 <Label htmlFor="label" className="text-xs font-medium">
-                  Nome do Elemento
+                  Nome do Agente
                 </Label>
                 <Input
                   id="label"
-                  value={screenData?.label || componentData?.label || ''}
+                  value={agentData?.label || dataData?.label || ''}
                   onChange={(e) => handleInputChange('label', e.target.value)}
                   className="h-8 text-sm"
                   placeholder="Digite o nome..."
                 />
               </div>
 
-              {/* Propriedades específicas de tela */}
-              {isScreenNode && screenData && (
+              {/* Propriedades específicas de agente */}
+              {isAgentNode && agentData && (
                 <>
                   <Separator />
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium flex items-center gap-2">
                       <Type className="w-4 h-4" />
-                      Configurações da Tela
+                      Configurações do Agente IA
                     </h4>
                     
+                    <div>
+                      <Label htmlFor="model" className="text-xs">Modelo</Label>
+                      <Input
+                        id="model"
+                        value={agentData.model || ''}
+                        onChange={(e) => handleInputChange('model', e.target.value)}
+                        className="h-8 text-sm"
+                        placeholder="GPT-4, Claude, etc."
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="instructions" className="text-xs">Instruções</Label>
+                      <Input
+                        id="instructions"
+                        value={agentData.instructions || ''}
+                        onChange={(e) => handleInputChange('instructions', e.target.value)}
+                        className="h-8 text-sm"
+                        placeholder="Defina o comportamento do agente..."
+                      />
+                    </div>
+
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label htmlFor="width" className="text-xs">Largura</Label>
+                        <Label htmlFor="temperature" className="text-xs">Temperature</Label>
                         <Input
-                          id="width"
+                          id="temperature"
                           type="number"
-                          value={screenData.width}
-                          onChange={(e) => handleInputChange('width', parseInt(e.target.value))}
+                          step="0.1"
+                          min="0"
+                          max="2"
+                          value={agentData.temperature || 0.7}
+                          onChange={(e) => handleInputChange('temperature', parseFloat(e.target.value))}
                           className="h-7 text-xs"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="height" className="text-xs">Altura</Label>
+                        <Label htmlFor="maxTokens" className="text-xs">Max Tokens</Label>
                         <Input
-                          id="height"
+                          id="maxTokens"
                           type="number"
-                          value={screenData.height}
-                          onChange={(e) => handleInputChange('height', parseInt(e.target.value))}
+                          value={agentData.maxTokens || 1000}
+                          onChange={(e) => handleInputChange('maxTokens', parseInt(e.target.value))}
                           className="h-7 text-xs"
                         />
                       </div>
@@ -135,50 +146,36 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
                 </>
               )}
 
-              {/* Propriedades específicas de componente */}
-              {isComponentNode && componentData && (
+              {/* Propriedades específicas de dados */}
+              {isDataNode && dataData && (
                 <>
                   <Separator />
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium flex items-center gap-2">
                       <Type className="w-4 h-4" />
-                      Configurações do Componente
+                      Configurações de Dados
                     </h4>
 
-                    {componentData.properties.text !== undefined && (
-                      <div>
-                        <Label htmlFor="text" className="text-xs">Texto</Label>
-                        <Input
-                          id="text"
-                          value={componentData.properties.text || ''}
-                          onChange={(e) => handleInputChange('properties.text', e.target.value)}
-                          className="h-8 text-sm"
-                          placeholder="Digite o texto..."
-                        />
-                      </div>
-                    )}
+                    <div>
+                      <Label htmlFor="format" className="text-xs">Formato</Label>
+                      <Input
+                        id="format"
+                        value={dataData.format || ''}
+                        onChange={(e) => handleInputChange('format', e.target.value)}
+                        className="h-8 text-sm"
+                        placeholder="text/plain, application/json, etc."
+                      />
+                    </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label htmlFor="comp-width" className="text-xs">Largura</Label>
-                        <Input
-                          id="comp-width"
-                          type="number"
-                          value={componentData.properties.width || ''}
-                          onChange={(e) => handleInputChange('properties.width', parseInt(e.target.value))}
-                          className="h-7 text-xs"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="comp-height" className="text-xs">Altura</Label>
-                        <Input
-                          id="comp-height"
-                          type="number"
-                          value={componentData.properties.height || ''}
-                          onChange={(e) => handleInputChange('properties.height', parseInt(e.target.value))}
-                          className="h-7 text-xs"
-                        />
-                      </div>
+                    <div>
+                      <Label htmlFor="size" className="text-xs">Tamanho</Label>
+                      <Input
+                        id="size"
+                        value={dataData.size || ''}
+                        onChange={(e) => handleInputChange('size', e.target.value)}
+                        className="h-8 text-sm"
+                        placeholder="1MB, 500KB, etc."
+                      />
                     </div>
                   </div>
                 </>
@@ -191,32 +188,26 @@ export const PropertiesPanel = ({ node, onUpdateNode, onClose }: PropertiesPanel
           <div className="space-y-3">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <Palette className="w-4 h-4" />
-              Aparência
+              Parâmetros Avançados
             </h4>
             
-            {isComponentNode && componentData && (
-              <div>
-                <Label htmlFor="color" className="text-xs">Cor Principal</Label>
-                <div className="flex gap-2 mt-1">
+            {isAgentNode && agentData && (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="description" className="text-xs">Descrição</Label>
                   <Input
-                    id="color"
-                    type="color"
-                    value={componentData.properties.color || '#D72638'}
-                    onChange={(e) => handleInputChange('properties.color', e.target.value)}
-                    className="h-8 w-16 p-1"
-                  />
-                  <Input
-                    value={componentData.properties.color || '#D72638'}
-                    onChange={(e) => handleInputChange('properties.color', e.target.value)}
-                    className="h-8 text-sm font-mono"
-                    placeholder="#D72638"
+                    id="description"
+                    value={agentData.description || ''}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    className="h-8 text-sm"
+                    placeholder="Descrição detalhada do agente..."
                   />
                 </div>
               </div>
             )}
 
             <div className="text-xs text-muted-foreground">
-              Mais opções de estilo em breve...
+              Mais parâmetros de configuração em breve...
             </div>
           </div>
         )}

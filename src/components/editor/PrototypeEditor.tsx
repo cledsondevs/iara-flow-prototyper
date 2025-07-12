@@ -15,7 +15,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import './editor-styles.css';
 
-import { ScreenNode, ComponentNode, ScreenNodeData, ComponentNodeData } from './NodeTypes';
+import { AgentNode, DataNode, AgentNodeData, DataNodeData } from './NodeTypes';
 import { NodePalette } from './NodePalette';
 import { EditorToolbar } from './EditorToolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -23,22 +23,33 @@ import { WelcomeGuide } from './WelcomeGuide';
 
 // Tipos de nós disponíveis
 const nodeTypes = {
-  screen: ScreenNode,
-  component: ComponentNode,
+  agent: AgentNode,
+  data: DataNode,
 };
 
 // Configuração inicial de nós e conexões
 const initialNodes: Node[] = [
   {
     id: '1',
-    type: 'screen',
-    position: { x: 400, y: 100 },
+    type: 'agent',
+    position: { x: 300, y: 100 },
     data: {
-      label: 'Home Screen',
-      screenType: 'mobile',
-      width: 375,
-      height: 812
-    } as ScreenNodeData,
+      label: 'Chat Assistant',
+      agentType: 'chatbot',
+      model: 'GPT-4',
+      temperature: 0.7,
+      instructions: 'Assistente conversacional para suporte ao cliente'
+    } as AgentNodeData,
+  },
+  {
+    id: '2',
+    type: 'data',
+    position: { x: 100, y: 200 },
+    data: {
+      label: 'User Input',
+      dataType: 'input',
+      format: 'text/plain'
+    } as DataNodeData,
   },
 ];
 
