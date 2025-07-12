@@ -96,3 +96,24 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* Device Frame Styles */
+.device-frame-mobile {
+  width: 400px;
+  height: 800px;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.device-frame-mobile:hover {
+  opacity: 0.25;
+}
+
+.device-screen {
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+}
+
+.device-notch {
+  margin-top: 8px;
+}

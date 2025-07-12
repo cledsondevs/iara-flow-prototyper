@@ -104,7 +104,7 @@ export const PrototypeEditor = () => {
   return (
     <div className="h-screen flex bg-background relative">
       {/* Paleta de Nós */}
-      <div className="flex-shrink-0 border-r border-border">
+      <div className="w-80 flex-shrink-0 border-r border-border bg-card">
         <NodePalette onAddNode={addNode} />
       </div>
 
@@ -118,8 +118,17 @@ export const PrototypeEditor = () => {
           onRedo={() => console.log('Refazer')}
         />
 
-        {/* Canvas do Editor */}
-        <div className="flex-1 relative">
+        {/* Canvas do Editor com Device Frame */}
+        <div className="flex-1 relative bg-muted/20">
+          {/* Device Frame Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="device-frame-mobile bg-card border-2 border-border rounded-[2rem] shadow-2xl pointer-events-none">
+              <div className="device-screen bg-background rounded-[1.5rem] m-2">
+                <div className="device-notch bg-border rounded-b-xl mx-auto w-20 h-4"></div>
+              </div>
+            </div>
+          </div>
+
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -131,24 +140,25 @@ export const PrototypeEditor = () => {
             nodeTypes={nodeTypes}
             fitView
             className="editor-surface"
+            defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
           >
-            <Controls className="!bottom-4 !left-4" />
+            <Controls className="!bottom-6 !left-6 !bg-card !border-border" />
             <MiniMap 
-              className="!bottom-4 !right-4"
+              className="!bottom-6 !right-6 !bg-card !border-border"
               nodeStrokeWidth={3}
               nodeColor={(node) => {
                 switch (node.type) {
-                  case 'screen': return '#D72638';
-                  case 'component': return '#6B7280';
-                  default: return '#9CA3AF';
+                  case 'screen': return 'hsl(var(--primary))';
+                  case 'component': return 'hsl(var(--muted-foreground))';
+                  default: return 'hsl(var(--muted-foreground)/0.5)';
                 }
               }}
             />
             <Background 
               variant={BackgroundVariant.Dots} 
-              gap={20} 
-              size={1}
-              className="!fill-editor-grid"
+              gap={24} 
+              size={1.5}
+              className="!fill-muted-foreground/20"
             />
           </ReactFlow>
         </div>
@@ -156,7 +166,7 @@ export const PrototypeEditor = () => {
 
       {/* Painel de Propriedades */}
       {selectedNode && (
-        <div className="flex-shrink-0 border-l border-border">
+        <div className="w-80 flex-shrink-0 border-l border-border bg-card">
           <PropertiesPanel
             node={selectedNode}
             onUpdateNode={updateNodeData}
