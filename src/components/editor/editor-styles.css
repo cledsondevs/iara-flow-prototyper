@@ -1,0 +1,98 @@
+/* React Flow customizations for Iara Hub editor */
+@import '@xyflow/react/dist/style.css';
+
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__panel {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-node);
+}
+
+.react-flow__controls-button {
+  background: transparent;
+  border: none;
+  color: hsl(var(--foreground));
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.react-flow__controls-button:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.react-flow__minimap-mask {
+  fill: hsl(var(--accent));
+}
+
+.react-flow__minimap-node {
+  fill: hsl(var(--muted));
+  stroke: hsl(var(--border));
+}
+
+.react-flow__edge {
+  stroke-width: 2;
+}
+
+.react-flow__edge.animated {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+.react-flow__edge.animated path {
+  stroke: hsl(var(--primary));
+}
+
+.react-flow__edge .react-flow__edge-path:hover {
+  stroke: hsl(var(--primary));
+  stroke-width: 3;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary));
+  stroke-width: 3;
+}
+
+.react-flow__connection-line {
+  stroke: hsl(var(--primary));
+  stroke-width: 2;
+}
+
+.react-flow__node {
+  font-size: 12px;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.react-flow__node:hover {
+  box-shadow: var(--shadow-floating);
+}
+
+.react-flow__node.selected {
+  box-shadow: var(--shadow-floating);
+}
+
+.react-flow__node.selectable:focus,
+.react-flow__node.selectable:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
