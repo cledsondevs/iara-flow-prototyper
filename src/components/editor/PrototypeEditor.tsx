@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -39,7 +39,8 @@ const initialNodes: Node[] = [
     data: {
       label: 'Chat Assistant',
       agentType: 'chatbot',
-      model: 'GPT-4',
+      provider: 'openai',
+      model: 'gpt-4',
       temperature: 0.7,
       instructions: 'Assistente conversacional para suporte ao cliente'
     } as AgentNodeData,
@@ -111,28 +112,63 @@ export const PrototypeEditor = () => {
     );
   }, [setNodes]);
 
+  // Deletar nó selecionado
+  const deleteNode = useCallback((nodeId: string) => {
+    setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+    setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
+    setSelectedNodeId(null);
+  }, [setNodes, setEdges]);
+
   // Limpar seleção ao clicar no fundo
   const onPaneClick = useCallback(() => {
     setSelectedNodeId(null);
   }, []);
 
+  // Deletar nó com tecla Delete
+  const onKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Delete' && selectedNodeId) {
+      deleteNode(selectedNodeId);
+    }
+  }, [selectedNodeId, deleteNode]);
+
+  // Adicionar listener para tecla Delete
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onKeyDown]);
+
   // Executar fluxo de IA
   const executeFlow = async () => {
-    const apiKey = localStorage.getItem('openai_api_key');
-    if (!apiKey) {
-      toast({
-        title: "API Key não configurada",
-        description: "Configure sua chave de API da OpenAI nas configurações.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    const openaiKey = localStorage.getItem('openai_api_key');
+    const geminiKey = localStorage.getItem('gemini_api_key');
+    
     const agentNodes = nodes.filter(node => node.type === 'agent');
     if (agentNodes.length === 0) {
       toast({
         title: "Nenhum agente encontrado",
         description: "Adicione pelo menos um agente de IA ao fluxo.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Verificar se as APIs necessárias estão configuradas
+    const needsOpenai = agentNodes.some(node => node.data.provider === 'openai' || !node.data.provider);
+    const needsGemini = agentNodes.some(node => node.data.provider === 'gemini');
+    
+    if (needsOpenai && !openaiKey) {
+      toast({
+        title: "API Key OpenAI não configurada",
+        description: "Configure sua chave de API da OpenAI nas configurações.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (needsGemini && !geminiKey) {
+      toast({
+        title: "API Key Gemini não configurada", 
+        description: "Configure sua chave de API do Google Gemini nas configurações.",
         variant: "destructive"
       });
       return;
@@ -157,35 +193,63 @@ export const PrototypeEditor = () => {
       ));
 
       try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: node.data.model || 'gpt-4',
-            messages: [
-              {
-                role: 'system',
-                content: node.data.instructions || 'Você é um assistente útil.'
-              },
-              {
-                role: 'user',
-                content: result
-              }
-            ],
-            temperature: node.data.temperature || 0.7,
-            max_tokens: node.data.maxTokens || 500
-          })
-        });
+        const provider = node.data.provider || 'openai';
+        let response;
 
-        if (!response.ok) {
-          throw new Error(`Erro na API: ${response.status}`);
+        if (provider === 'openai') {
+          response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${openaiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: node.data.model || 'gpt-4',
+              messages: [
+                {
+                  role: 'system',
+                  content: node.data.instructions || 'Você é um assistente útil.'
+                },
+                {
+                  role: 'user',
+                  content: result
+                }
+              ],
+              temperature: node.data.temperature || 0.7,
+              max_tokens: node.data.maxTokens || 500
+            })
+          });
+        } else if (provider === 'gemini') {
+          response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${node.data.model || 'gemini-1.5-pro'}:generateContent?key=${geminiKey}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: `${node.data.instructions || 'Você é um assistente útil.'}\n\nUsuário: ${result}`
+                }]
+              }],
+              generationConfig: {
+                temperature: node.data.temperature || 0.7,
+                maxOutputTokens: node.data.maxTokens || 500
+              }
+            })
+          });
+        }
+
+        if (!response?.ok) {
+          throw new Error(`Erro na API ${provider}: ${response?.status}`);
         }
 
         const data = await response.json();
-        result = data.choices[0].message.content;
+        
+        if (provider === 'openai') {
+          result = data.choices[0].message.content;
+        } else if (provider === 'gemini') {
+          result = data.candidates[0].content.parts[0].text;
+        }
 
         setExecutionSteps(prev => prev.map(step => 
           step.id === node.id ? { ...step, status: 'success', result } : step
@@ -196,7 +260,7 @@ export const PrototypeEditor = () => {
         ));
         toast({
           title: "Erro na execução",
-          description: `Falha ao executar o agente ${node.data.label}`,
+          description: `Falha ao executar o agente ${node.data.label}: ${error.message}`,
           variant: "destructive"
         });
         return;
@@ -285,6 +349,7 @@ export const PrototypeEditor = () => {
           <PropertiesPanel
             node={selectedNode}
             onUpdateNode={updateNodeData}
+            onDeleteNode={deleteNode}
             onClose={() => setSelectedNodeId(null)}
           />
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Settings, Eye, EyeOff } from 'lucide-react';
 
@@ -11,69 +12,107 @@ interface ConfigDialogProps {
 }
 
 export const ConfigDialog = ({ open, onOpenChange }: ConfigDialogProps) => {
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
+  const [openaiApiKey, setOpenaiApiKey] = useState('');
+  const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [showOpenaiKey, setShowOpenaiKey] = useState(false);
+  const [showGeminiKey, setShowGeminiKey] = useState(false);
 
   useEffect(() => {
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-    }
+    const savedOpenaiKey = localStorage.getItem('openai_api_key');
+    const savedGeminiKey = localStorage.getItem('gemini_api_key');
+    if (savedOpenaiKey) setOpenaiApiKey(savedOpenaiKey);
+    if (savedGeminiKey) setGeminiApiKey(savedGeminiKey);
   }, []);
 
   const handleSave = () => {
-    localStorage.setItem('openai_api_key', apiKey);
+    localStorage.setItem('openai_api_key', openaiApiKey);
+    localStorage.setItem('gemini_api_key', geminiApiKey);
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
-            Configurações
+            Configurações de API
           </DialogTitle>
           <DialogDescription>
-            Configure sua chave de API da OpenAI para executar os fluxos de IA.
+            Configure suas chaves de API para executar os fluxos de IA.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 pt-4">
-          <div className="space-y-2">
-            <Label htmlFor="apiKey">Chave de API OpenAI</Label>
-            <div className="relative">
-              <Input
-                id="apiKey"
-                type={showApiKey ? "text" : "password"}
-                placeholder="sk-..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-1 top-1 h-7 w-7 p-0"
-                onClick={() => setShowApiKey(!showApiKey)}
-              >
-                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </Button>
+        <Tabs defaultValue="openai" className="pt-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="openai">OpenAI</TabsTrigger>
+            <TabsTrigger value="gemini">Google Gemini</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="openai" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="openaiKey">Chave de API OpenAI</Label>
+              <div className="relative">
+                <Input
+                  id="openaiKey"
+                  type={showOpenaiKey ? "text" : "password"}
+                  placeholder="sk-..."
+                  value={openaiApiKey}
+                  onChange={(e) => setOpenaiApiKey(e.target.value)}
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1 h-7 w-7 p-0"
+                  onClick={() => setShowOpenaiKey(!showOpenaiKey)}
+                >
+                  {showOpenaiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Obtenha sua chave em: platform.openai.com/api-keys
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Sua chave será armazenada localmente no navegador.
-            </p>
-          </div>
+          </TabsContent>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSave}>
-              Salvar
-            </Button>
-          </div>
+          <TabsContent value="gemini" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="geminiKey">Chave de API Google Gemini</Label>
+              <div className="relative">
+                <Input
+                  id="geminiKey"
+                  type={showGeminiKey ? "text" : "password"}
+                  placeholder="AIza..."
+                  value={geminiApiKey}
+                  onChange={(e) => setGeminiApiKey(e.target.value)}
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1 h-7 w-7 p-0"
+                  onClick={() => setShowGeminiKey(!showGeminiKey)}
+                >
+                  {showGeminiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Obtenha sua chave em: aistudio.google.com/app/apikey
+              </p>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex justify-end gap-2 pt-4">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave}>
+            Salvar Configurações
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

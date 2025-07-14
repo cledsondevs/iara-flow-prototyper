@@ -10,6 +10,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 
 export interface AgentNodeData extends BaseNodeData {
   agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor';
+  provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
   maxTokens?: number;
@@ -55,9 +56,9 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
         <span className="font-medium text-sm">{data.label}</span>
       </div>
       
-      {data.model && (
+      {data.provider && data.model && (
         <div className="text-xs text-muted-foreground font-mono mb-1">
-          Model: {data.model}
+          {data.provider.toUpperCase()}: {data.model}
         </div>
       )}
       
