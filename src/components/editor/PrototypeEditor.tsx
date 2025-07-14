@@ -20,6 +20,9 @@ import { NodePalette } from './NodePalette';
 import { EditorToolbar } from './EditorToolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { WelcomeGuide } from './WelcomeGuide';
+import { ConfigDialog } from './ConfigDialog';
+import { ExecutionResult } from './ExecutionResult';
+import { useToast } from '@/hooks/use-toast';
 
 // Tipos de nós disponíveis
 const nodeTypes = {
@@ -60,6 +63,11 @@ export const PrototypeEditor = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showConfig, setShowConfig] = useState(false);
+  const [showExecution, setShowExecution] = useState(false);
+  const [executionSteps, setExecutionSteps] = useState<any[]>([]);
+  const [finalResult, setFinalResult] = useState<string>('');
+  const { toast } = useToast();
 
   // Conectar nós
   const onConnect = useCallback(
@@ -108,6 +116,100 @@ export const PrototypeEditor = () => {
     setSelectedNodeId(null);
   }, []);
 
+  // Executar fluxo de IA
+  const executeFlow = async () => {
+    const apiKey = localStorage.getItem('openai_api_key');
+    if (!apiKey) {
+      toast({
+        title: "API Key não configurada",
+        description: "Configure sua chave de API da OpenAI nas configurações.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const agentNodes = nodes.filter(node => node.type === 'agent');
+    if (agentNodes.length === 0) {
+      toast({
+        title: "Nenhum agente encontrado",
+        description: "Adicione pelo menos um agente de IA ao fluxo.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setExecutionSteps([]);
+    setFinalResult('');
+    setShowExecution(true);
+
+    const steps = agentNodes.map(node => ({
+      id: node.id,
+      label: node.data.label,
+      status: 'pending' as const
+    }));
+    setExecutionSteps(steps);
+
+    let result = "Entrada do usuário";
+
+    for (const node of agentNodes) {
+      setExecutionSteps(prev => prev.map(step => 
+        step.id === node.id ? { ...step, status: 'running' } : step
+      ));
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: node.data.model || 'gpt-4',
+            messages: [
+              {
+                role: 'system',
+                content: node.data.instructions || 'Você é um assistente útil.'
+              },
+              {
+                role: 'user',
+                content: result
+              }
+            ],
+            temperature: node.data.temperature || 0.7,
+            max_tokens: node.data.maxTokens || 500
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro na API: ${response.status}`);
+        }
+
+        const data = await response.json();
+        result = data.choices[0].message.content;
+
+        setExecutionSteps(prev => prev.map(step => 
+          step.id === node.id ? { ...step, status: 'success', result } : step
+        ));
+      } catch (error) {
+        setExecutionSteps(prev => prev.map(step => 
+          step.id === node.id ? { ...step, status: 'error', error: error.message } : step
+        ));
+        toast({
+          title: "Erro na execução",
+          description: `Falha ao executar o agente ${node.data.label}`,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    setFinalResult(result);
+    toast({
+      title: "Execução concluída",
+      description: "Fluxo de IA executado com sucesso!"
+    });
+  };
+
   const selectedNode = selectedNodeId 
     ? nodes.find(node => node.id === selectedNodeId) 
     : null;
@@ -127,6 +229,8 @@ export const PrototypeEditor = () => {
           onExport={() => console.log('Exportando...')}
           onUndo={() => console.log('Desfazer')}
           onRedo={() => console.log('Refazer')}
+          onExecute={executeFlow}
+          onConfig={() => setShowConfig(true)}
         />
 
         {/* Canvas do Editor com Device Frame */}
@@ -190,6 +294,20 @@ export const PrototypeEditor = () => {
       {showWelcome && (
         <WelcomeGuide onClose={() => setShowWelcome(false)} />
       )}
+
+      {/* Dialog de Configurações */}
+      <ConfigDialog 
+        open={showConfig} 
+        onOpenChange={setShowConfig} 
+      />
+
+      {/* Resultado da Execução */}
+      <ExecutionResult 
+        open={showExecution}
+        onClose={() => setShowExecution(false)}
+        steps={executionSteps}
+        finalResult={finalResult}
+      />
     </div>
   );
 };

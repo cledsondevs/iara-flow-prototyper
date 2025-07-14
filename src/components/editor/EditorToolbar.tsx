@@ -17,7 +17,8 @@ interface EditorToolbarProps {
   onExport: () => void;
   onUndo: () => void;
   onRedo: () => void;
-  onPreview?: () => void;
+  onExecute: () => void;
+  onConfig: () => void;
 }
 
 export const EditorToolbar = ({ 
@@ -25,7 +26,8 @@ export const EditorToolbar = ({
   onExport, 
   onUndo, 
   onRedo, 
-  onPreview 
+  onExecute,
+  onConfig 
 }: EditorToolbarProps) => {
   return (
     <div className="h-14 border-b border-border bg-card px-4 flex items-center justify-between">
@@ -112,36 +114,24 @@ export const EditorToolbar = ({
 
       {/* Grupo de ações secundárias */}
       <div className="flex items-center gap-2">
-        {onPreview && (
-          <>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={onPreview}
-              className="h-8 px-3 bg-primary hover:bg-primary-hover"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Preview
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-          </>
-        )}
-        
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="h-8 w-8 p-0"
+          onClick={onConfig}
+          className="h-8 px-3"
         >
-          <Grid3X3 className="w-4 h-4" />
+          <Settings className="w-4 h-4 mr-2" />
+          Config
         </Button>
         
         <Button
-          variant="ghost"
+          variant="default"
           size="sm"
-          className="h-8 w-8 p-0"
+          onClick={onExecute}
+          className="h-8 px-3 bg-primary hover:bg-primary-hover"
         >
-          <Settings className="w-4 h-4" />
+          <Play className="w-4 h-4 mr-2" />
+          Executar
         </Button>
       </div>
     </div>
