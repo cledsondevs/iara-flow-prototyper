@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { X, Trash2 } from 'lucide-react';
-import { AgentNodeData, DataNodeData } from './NodeTypes';
+import { AgentNodeData, DataNodeData, LogicNodeData } from './NodeTypes';
 
 interface PropertiesPanelProps {
   node: Node;
@@ -24,8 +24,10 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
 
   const isAgentNode = node.type === 'agent';
   const isDataNode = node.type === 'data';
+  const isLogicNode = node.type === 'logic';
   const agentData = node.data as AgentNodeData;
   const dataData = node.data as DataNodeData;
+  const logicData = node.data as LogicNodeData;
 
   return (
     <Card className="h-full rounded-none border-none shadow-none">
@@ -34,7 +36,9 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
           <div>
             <CardTitle className="text-base">Propriedades</CardTitle>
             <CardDescription className="text-sm">
-              {node.type === 'agent' ? 'Agente de IA' : 'Dados'}
+              {node.type === 'agent' && 'Agente de IA'}
+              {node.type === 'data' && 'Nó de Dados'}
+              {node.type === 'logic' && 'Nó de Lógica'}
             </CardDescription>
           </div>
           <div className="flex items-center gap-1">
@@ -199,6 +203,50 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                   value={dataData.size || ''}
                   onChange={(e) => updateField('size', e.target.value)}
                   placeholder="1MB, 500KB..."
+                />
+              </div>
+            </>
+          )}
+
+          {isLogicNode && (
+            <>
+              <div className="space-y-2">
+                <Label>Tipo de Condição</Label>
+                <Select 
+                  value={logicData.conditionType || 'if'} 
+                  onValueChange={(value) => updateField('conditionType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="if">If (Condição)</SelectItem>
+                    <SelectItem value="else">Else (Alternativo)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {logicData.conditionType === 'if' && (
+                <div className="space-y-2">
+                  <Label>Condição</Label>
+                  <Input
+                    value={logicData.condition || ''}
+                    onChange={(e) => updateField('condition', e.target.value)}
+                    placeholder="Ex: length > 10"
+                  />
+                  <div className="text-xs text-muted-foreground">
+                    Condição a ser avaliada (ex: length &gt; 10)
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label>Descrição</Label>
+                <Textarea
+                  value={logicData.description || ''}
+                  onChange={(e) => updateField('description', e.target.value)}
+                  placeholder="Descrição do nó de lógica"
+                  rows={2}
                 />
               </div>
             </>

@@ -15,7 +15,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import './editor-styles.css';
 
-import { AgentNode, DataNode, AgentNodeData, DataNodeData } from './NodeTypes';
+import { AgentNode, DataNode, LogicNode, AgentNodeData, DataNodeData, LogicNodeData } from './NodeTypes';
 import { NodePalette } from './NodePalette';
 import { EditorToolbar } from './EditorToolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 const nodeTypes = {
   agent: AgentNode,
   data: DataNode,
+  logic: LogicNode,
 };
 
 // Configuração inicial de nós e conexões
@@ -54,6 +55,17 @@ const initialNodes: Node[] = [
       dataType: 'input',
       format: 'text/plain'
     } as DataNodeData,
+  },
+  {
+    id: '3',
+    type: 'logic',
+    position: { x: 200, y: 300 },
+    data: {
+      label: 'If Condition',
+      conditionType: 'if',
+      condition: 'length > 10',
+      description: 'Verifica se a resposta tem mais de 10 caracteres'
+    } as LogicNodeData,
   },
 ];
 
@@ -191,6 +203,8 @@ export const PrototypeEditor = () => {
     const geminiKey = localStorage.getItem('gemini_api_key');
     
     const agentNodes = nodes.filter(node => node.type === 'agent');
+    const logicNodes = nodes.filter(node => node.type === 'logic');
+    
     if (agentNodes.length === 0) {
       toast({
         title: "Nenhum agente encontrado",
@@ -226,9 +240,12 @@ export const PrototypeEditor = () => {
     setFinalResult('');
     setShowExecution(true);
 
-    const steps = agentNodes.map(node => ({
+    // Incluir nós de lógica nos steps
+    const allExecutableNodes = [...agentNodes, ...logicNodes];
+    const steps = allExecutableNodes.map(node => ({
       id: node.id,
       label: node.data.label,
+      type: node.type,
       status: 'pending' as const
     }));
     setExecutionSteps(steps);
@@ -239,68 +256,110 @@ export const PrototypeEditor = () => {
       ? inputNodes[0].data.userInput 
       : "Entrada do usuário não fornecida";
 
-    for (const node of agentNodes) {
+    // Executar nós em sequência (agentes e lógica)
+    for (const node of allExecutableNodes) {
       setExecutionSteps(prev => prev.map(step => 
         step.id === node.id ? { ...step, status: 'running' } : step
       ));
 
       try {
-        const provider = node.data.provider || 'openai';
-        let response;
+        if (node.type === 'agent') {
+          // Executar nó agente
+          const provider = node.data.provider || 'openai';
+          let response;
 
-        if (provider === 'openai') {
-          response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${openaiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: node.data.model || 'gpt-4',
-              messages: [
-                {
-                  role: 'system',
-                  content: node.data.instructions || 'Você é um assistente útil.'
-                },
-                {
-                  role: 'user',
-                  content: result
-                }
-              ],
-              temperature: node.data.temperature || 0.7,
-              max_tokens: node.data.maxTokens || 500
-            })
-          });
-        } else if (provider === 'gemini') {
-          response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${node.data.model || 'gemini-1.5-pro'}:generateContent?key=${geminiKey}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `${node.data.instructions || 'Você é um assistente útil.'}\n\nUsuário: ${result}`
-                }]
-              }],
-              generationConfig: {
+          if (provider === 'openai') {
+            response = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${openaiKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: node.data.model || 'gpt-4',
+                messages: [
+                  {
+                    role: 'system',
+                    content: node.data.instructions || 'Você é um assistente útil.'
+                  },
+                  {
+                    role: 'user',
+                    content: result
+                  }
+                ],
                 temperature: node.data.temperature || 0.7,
-                maxOutputTokens: node.data.maxTokens || 500
+                max_tokens: node.data.maxTokens || 500
+              })
+            });
+          } else if (provider === 'gemini') {
+            response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${node.data.model || 'gemini-1.5-pro'}:generateContent?key=${geminiKey}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [{
+                    text: `${node.data.instructions || 'Você é um assistente útil.'}\n\nUsuário: ${result}`
+                  }]
+                }],
+                generationConfig: {
+                  temperature: node.data.temperature || 0.7,
+                  maxOutputTokens: node.data.maxTokens || 500
+                }
+              })
+            });
+          }
+
+          if (!response?.ok) {
+            throw new Error(`Erro na API ${provider}: ${response?.status}`);
+          }
+
+          const data = await response.json();
+          
+          if (provider === 'openai') {
+            result = data.choices[0].message.content;
+          } else if (provider === 'gemini') {
+            result = data.candidates[0].content.parts[0].text;
+          }
+
+        } else if (node.type === 'logic') {
+          // Executar nó lógico
+          if (node.data.conditionType === 'if') {
+            const condition = String(node.data.condition || 'true');
+            let conditionResult = false;
+            
+            try {
+              // Avaliar condição simples (ex: length > 10)
+              if (condition.includes('length')) {
+                const match = condition.match(/length\s*([><=!]+)\s*(\d+)/);
+                if (match) {
+                  const [, operator, value] = match;
+                  const resultLength = String(result).length;
+                  const targetValue = parseInt(value);
+                  
+                  switch (operator) {
+                    case '>': conditionResult = resultLength > targetValue; break;
+                    case '<': conditionResult = resultLength < targetValue; break;
+                    case '>=': conditionResult = resultLength >= targetValue; break;
+                    case '<=': conditionResult = resultLength <= targetValue; break;
+                    case '==': conditionResult = resultLength === targetValue; break;
+                    case '!=': conditionResult = resultLength !== targetValue; break;
+                    default: conditionResult = false;
+                  }
+                }
+              } else {
+                // Para outras condições, assumir verdadeiro por padrão
+                conditionResult = true;
               }
-            })
-          });
-        }
-
-        if (!response?.ok) {
-          throw new Error(`Erro na API ${provider}: ${response?.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (provider === 'openai') {
-          result = data.choices[0].message.content;
-        } else if (provider === 'gemini') {
-          result = data.candidates[0].content.parts[0].text;
+            } catch (error) {
+              conditionResult = false;
+            }
+            
+            result = `Condição "${condition}" avaliada como: ${conditionResult ? 'VERDADEIRA' : 'FALSA'}\nResultado anterior: ${result}`;
+          } else if (node.data.conditionType === 'else') {
+            result = `Executando caminho alternativo (ELSE)\nResultado anterior: ${result}`;
+          }
         }
 
         setExecutionSteps(prev => prev.map(step => 

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow } from 'lucide-react';
 
 interface NodePaletteProps {
   onAddNode: (type: string, data: any) => void;
 }
 
 export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
-  const [activeCategory, setActiveCategory] = useState<'agents' | 'data'>('agents');
+  const [activeCategory, setActiveCategory] = useState<'agents' | 'data' | 'logic'>('agents');
 
   const agentTemplates = [
     {
@@ -120,11 +120,41 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
     }
   ];
 
+  const logicTemplates = [
+    {
+      id: 'if-condition',
+      label: 'Condition (If)',
+      icon: GitBranch,
+      description: 'Condição lógica',
+      color: 'text-amber-600',
+      data: {
+        label: 'If Condition',
+        conditionType: 'if',
+        condition: 'length > 10',
+        description: 'Verifica se a condição é verdadeira'
+      }
+    },
+    {
+      id: 'else-condition',
+      label: 'Alternative (Else)',
+      icon: Workflow,
+      description: 'Caminho alternativo',
+      color: 'text-red-600',
+      data: {
+        label: 'Else',
+        conditionType: 'else',
+        description: 'Executa quando a condição é falsa'
+      }
+    }
+  ];
+
   const handleAddNode = (template: any) => {
     if (activeCategory === 'agents') {
       onAddNode('agent', template.data);
-    } else {
+    } else if (activeCategory === 'data') {
       onAddNode('data', template.data);
+    } else if (activeCategory === 'logic') {
+      onAddNode('logic', template.data);
     }
   };
 
@@ -154,6 +184,15 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
           >
             <Database className="w-3 h-3 mr-1" />
             Dados
+          </Button>
+          <Button
+            variant={activeCategory === 'logic' ? 'default' : 'ghost'}
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={() => setActiveCategory('logic')}
+          >
+            <GitBranch className="w-3 h-3 mr-1" />
+            Lógica
           </Button>
         </div>
       </CardHeader>
@@ -187,6 +226,28 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
               Fontes de dados e APIs
             </div>
             {dataTemplates.map((template) => (
+              <Button
+                key={template.id}
+                variant="outline"
+                className="w-full justify-start h-auto p-3 bg-card hover:bg-accent text-left"
+                onClick={() => handleAddNode(template)}
+              >
+                <template.icon className={`w-4 h-4 mr-3 ${template.color} flex-shrink-0`} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium">{template.label}</div>
+                  <div className="text-xs text-muted-foreground">{template.description}</div>
+                </div>
+              </Button>
+            ))}
+          </>
+        )}
+
+        {activeCategory === 'logic' && (
+          <>
+            <div className="text-xs font-medium text-muted-foreground mb-3">
+              Nós de controle de fluxo
+            </div>
+            {logicTemplates.map((template) => (
               <Button
                 key={template.id}
                 variant="outline"

@@ -1,7 +1,8 @@
 import { memo, useState } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 
 // Tipos de dados para os nós de agentes de IA
 export interface BaseNodeData extends Record<string, unknown> {
@@ -23,6 +24,14 @@ export interface DataNodeData extends BaseNodeData {
   format?: string;
   size?: string;
   userInput?: string;
+}
+
+// Tipos de dados para os nós de lógica
+export interface LogicNodeData extends Record<string, unknown> {
+  label: string;
+  conditionType: 'if' | 'else';
+  condition?: string;
+  description?: string;
 }
 
 // Componente Nó de Agente de IA
@@ -156,6 +165,106 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
         position={Position.Bottom}
         className="w-2 h-2 !bg-primary border border-card"
       />
+    </div>
+  );
+});
+
+// Componente Nó de Lógica (If/Else)
+export const LogicNode = memo(({ data, id }: NodeProps & { data: LogicNodeData; id: string }) => {
+  const [condition, setCondition] = useState(data.condition || '');
+  
+  const getIcon = () => {
+    switch (data.conditionType) {
+      case 'if': return GitBranch;
+      case 'else': return Workflow;
+      default: return GitBranch;
+    }
+  };
+
+  const getColor = () => {
+    switch (data.conditionType) {
+      case 'if': return 'text-amber-600';
+      case 'else': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getBgColor = () => {
+    switch (data.conditionType) {
+      case 'if': return 'bg-amber-50 border-amber-200';
+      case 'else': return 'bg-red-50 border-red-200';
+      default: return 'bg-gray-50 border-gray-200';
+    }
+  };
+
+  // Atualizar condição quando muda
+  const handleConditionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCondition(value);
+    // Atualizar os dados do nó usando um evento customizado
+    window.dispatchEvent(new CustomEvent('updateNodeData', {
+      detail: { nodeId: id, updates: { condition: value } }
+    }));
+  };
+
+  const Icon = getIcon();
+
+  return (
+    <div className={`px-3 py-2 border rounded-lg min-w-[180px] shadow-md ${getBgColor()}`}>
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className={`w-4 h-4 ${getColor()}`} />
+        <span className="font-medium text-sm">{data.label}</span>
+      </div>
+      
+      {data.conditionType === 'if' && (
+        <div className="mt-2">
+          <Input
+            placeholder="Ex: length > 10"
+            value={condition}
+            onChange={handleConditionChange}
+            className="nodrag text-xs"
+          />
+          <div className="text-xs text-muted-foreground mt-1">
+            Condição a ser avaliada
+          </div>
+        </div>
+      )}
+      
+      {data.description && (
+        <div className="text-xs text-muted-foreground mt-1">
+          {data.description}
+        </div>
+      )}
+      
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="w-3 h-3 bg-background border-2 border-border"
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="w-3 h-3 bg-background border-2 border-border"
+      />
+      
+      {data.conditionType === 'if' && (
+        <>
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            id="true"
+            className="w-3 h-3 bg-green-500 border-2 border-green-600"
+            style={{ left: '25%' }}
+          />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            id="false"
+            className="w-3 h-3 bg-red-500 border-2 border-red-600"
+            style={{ left: '75%' }}
+          />
+        </>
+      )}
     </div>
   );
 });
