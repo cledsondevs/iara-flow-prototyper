@@ -112,6 +112,17 @@ export const PrototypeEditor = () => {
     );
   }, [setNodes]);
 
+  // Event listener para atualizações do nó via eventos customizados
+  useEffect(() => {
+    const handleUpdateNodeData = (event: CustomEvent) => {
+      const { nodeId, updates } = event.detail;
+      updateNodeData(nodeId, updates);
+    };
+
+    window.addEventListener('updateNodeData', handleUpdateNodeData);
+    return () => window.removeEventListener('updateNodeData', handleUpdateNodeData);
+  }, [updateNodeData]);
+
   // Deletar nó selecionado
   const deleteNode = useCallback((nodeId: string) => {
     setNodes((nds) => nds.filter((node) => node.id !== nodeId));
@@ -185,7 +196,11 @@ export const PrototypeEditor = () => {
     }));
     setExecutionSteps(steps);
 
-    let result = "Entrada do usuário";
+    // Buscar nós de input para obter entrada do usuário
+    const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
+    let result = inputNodes.length > 0 && inputNodes[0].data.userInput 
+      ? inputNodes[0].data.userInput 
+      : "Entrada do usuário não fornecida";
 
     for (const node of agentNodes) {
       setExecutionSteps(prev => prev.map(step => 
@@ -267,7 +282,7 @@ export const PrototypeEditor = () => {
       }
     }
 
-    setFinalResult(result);
+    setFinalResult(String(result));
     toast({
       title: "Execução concluída",
       description: "Fluxo de IA executado com sucesso!"

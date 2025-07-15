@@ -1,6 +1,7 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 // Tipos de dados para os nós de agentes de IA
 export interface BaseNodeData extends Record<string, unknown> {
@@ -21,6 +22,7 @@ export interface DataNodeData extends BaseNodeData {
   dataType: 'input' | 'output' | 'database' | 'api' | 'file';
   format?: string;
   size?: string;
+  userInput?: string;
 }
 
 // Componente Nó de Agente de IA
@@ -83,7 +85,9 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
 });
 
 // Componente Nó de Dados
-export const DataNode = memo(({ data }: NodeProps & { data: DataNodeData }) => {
+export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id: string }) => {
+  const [userInput, setUserInput] = useState(data.userInput || '');
+  
   const getIcon = () => {
     switch (data.dataType) {
       case 'input': return FileText;
@@ -108,12 +112,33 @@ export const DataNode = memo(({ data }: NodeProps & { data: DataNodeData }) => {
     }
   };
 
+  // Atualizar dados do nó quando o input muda
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setUserInput(value);
+    // Atualizar os dados do nó usando um evento customizado
+    window.dispatchEvent(new CustomEvent('updateNodeData', {
+      detail: { nodeId: id, updates: { userInput: value } }
+    }));
+  };
+
   return (
-    <div className="px-3 py-2 bg-card border border-border rounded-lg min-w-[140px] shadow-md">
-      <div className="flex items-center gap-2">
+    <div className="px-3 py-2 bg-card border border-border rounded-lg min-w-[180px] shadow-md">
+      <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${getColor()}`} />
         <span className="font-medium text-sm">{data.label}</span>
       </div>
+      
+      {data.dataType === 'input' && (
+        <div className="mt-2">
+          <Textarea
+            placeholder="Digite sua mensagem aqui..."
+            value={userInput}
+            onChange={handleInputChange}
+            className="nodrag min-h-[60px] text-xs"
+          />
+        </div>
+      )}
       
       {data.format && (
         <div className="text-xs text-muted-foreground mt-1 font-mono">
