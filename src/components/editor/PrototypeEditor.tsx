@@ -23,6 +23,7 @@ import { WelcomeGuide } from './WelcomeGuide';
 import { ConfigDialog } from './ConfigDialog';
 import { ExecutionResult } from './ExecutionResult';
 import { useToast } from '@/hooks/use-toast';
+import { apiService } from '@/services/api';
 
 // Tipos de nós disponíveis
 const nodeTypes = {
@@ -197,13 +198,9 @@ export const PrototypeEditor = () => {
     });
   };
 
-  // Executar fluxo de IA
+  // Executar fluxo de IA usando o backend
   const executeFlow = async () => {
-    const openaiKey = localStorage.getItem('openai_api_key');
-    const geminiKey = localStorage.getItem('gemini_api_key');
-    
     const agentNodes = nodes.filter(node => node.type === 'agent');
-    const logicNodes = nodes.filter(node => node.type === 'logic');
     
     if (agentNodes.length === 0) {
       toast({
@@ -214,35 +211,25 @@ export const PrototypeEditor = () => {
       return;
     }
 
-    // Verificar se as APIs necessárias estão configuradas
-    const needsOpenai = agentNodes.some(node => node.data.provider === 'openai' || !node.data.provider);
-    const needsGemini = agentNodes.some(node => node.data.provider === 'gemini');
-    
-    if (needsOpenai && !openaiKey) {
-      toast({
-        title: "API Key OpenAI não configurada",
-        description: "Configure sua chave de API da OpenAI nas configurações.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (needsGemini && !geminiKey) {
-      toast({
-        title: "API Key Gemini não configurada", 
-        description: "Configure sua chave de API do Google Gemini nas configurações.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setExecutionSteps([]);
     setFinalResult('');
     setShowExecution(true);
 
-    // Incluir nós de lógica nos steps
-    const allExecutableNodes = [...agentNodes, ...logicNodes];
-    const steps = allExecutableNodes.map(node => ({
+    // Preparar dados do fluxo
+    const flowData = {
+      nodes,
+      edges,
+      exportedAt: new Date().toISOString()
+    };
+
+    // Buscar nós de input para obter entrada do usuário
+    const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
+    const userInput = inputNodes.length > 0 && inputNodes[0].data.userInput 
+      ? inputNodes[0].data.userInput 
+      : "Entrada do usuário não fornecida";
+
+    // Mostrar steps iniciais
+    const steps = agentNodes.map(node => ({
       id: node.id,
       label: node.data.label,
       type: node.type,
@@ -250,139 +237,52 @@ export const PrototypeEditor = () => {
     }));
     setExecutionSteps(steps);
 
-    // Buscar nós de input para obter entrada do usuário
-    const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
-    let result = inputNodes.length > 0 && inputNodes[0].data.userInput 
-      ? inputNodes[0].data.userInput 
-      : "Entrada do usuário não fornecida";
+    try {
+      // Executar fluxo via API
+      const result = await apiService.executeFlowDirect(flowData, userInput);
 
-    // Executar nós em sequência (agentes e lógica)
-    for (const node of allExecutableNodes) {
-      setExecutionSteps(prev => prev.map(step => 
-        step.id === node.id ? { ...step, status: 'running' } : step
-      ));
+      if (result.success && result.data) {
+        // Atualizar steps como sucesso
+        setExecutionSteps(prev => prev.map(step => ({
+          ...step,
+          status: 'success' as const,
+          result: result.data?.output || 'Executado com sucesso'
+        })));
 
-      try {
-        if (node.type === 'agent') {
-          // Executar nó agente
-          const provider = node.data.provider || 'openai';
-          let response;
+        setFinalResult(result.data.output || 'Execução concluída');
+        
+        toast({
+          title: "Execução concluída",
+          description: "Fluxo de IA executado com sucesso!"
+        });
+      } else {
+        // Atualizar steps como erro
+        setExecutionSteps(prev => prev.map(step => ({
+          ...step,
+          status: 'error' as const,
+          error: result.error || 'Erro desconhecido'
+        })));
 
-          if (provider === 'openai') {
-            response = await fetch('https://api.openai.com/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${openaiKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: node.data.model || 'gpt-4',
-                messages: [
-                  {
-                    role: 'system',
-                    content: node.data.instructions || 'Você é um assistente útil.'
-                  },
-                  {
-                    role: 'user',
-                    content: result
-                  }
-                ],
-                temperature: node.data.temperature || 0.7,
-                max_tokens: node.data.maxTokens || 500
-              })
-            });
-          } else if (provider === 'gemini') {
-            response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${node.data.model || 'gemini-1.5-pro'}:generateContent?key=${geminiKey}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                contents: [{
-                  parts: [{
-                    text: `${node.data.instructions || 'Você é um assistente útil.'}\n\nUsuário: ${result}`
-                  }]
-                }],
-                generationConfig: {
-                  temperature: node.data.temperature || 0.7,
-                  maxOutputTokens: node.data.maxTokens || 500
-                }
-              })
-            });
-          }
-
-          if (!response?.ok) {
-            throw new Error(`Erro na API ${provider}: ${response?.status}`);
-          }
-
-          const data = await response.json();
-          
-          if (provider === 'openai') {
-            result = data.choices[0].message.content;
-          } else if (provider === 'gemini') {
-            result = data.candidates[0].content.parts[0].text;
-          }
-
-        } else if (node.type === 'logic') {
-          // Executar nó lógico
-          if (node.data.conditionType === 'if') {
-            const condition = String(node.data.condition || 'true');
-            let conditionResult = false;
-            
-            try {
-              // Avaliar condição simples (ex: length > 10)
-              if (condition.includes('length')) {
-                const match = condition.match(/length\s*([><=!]+)\s*(\d+)/);
-                if (match) {
-                  const [, operator, value] = match;
-                  const resultLength = String(result).length;
-                  const targetValue = parseInt(value);
-                  
-                  switch (operator) {
-                    case '>': conditionResult = resultLength > targetValue; break;
-                    case '<': conditionResult = resultLength < targetValue; break;
-                    case '>=': conditionResult = resultLength >= targetValue; break;
-                    case '<=': conditionResult = resultLength <= targetValue; break;
-                    case '==': conditionResult = resultLength === targetValue; break;
-                    case '!=': conditionResult = resultLength !== targetValue; break;
-                    default: conditionResult = false;
-                  }
-                }
-              } else {
-                // Para outras condições, assumir verdadeiro por padrão
-                conditionResult = true;
-              }
-            } catch (error) {
-              conditionResult = false;
-            }
-            
-            result = `Condição "${condition}" avaliada como: ${conditionResult ? 'VERDADEIRA' : 'FALSA'}\nResultado anterior: ${result}`;
-          } else if (node.data.conditionType === 'else') {
-            result = `Executando caminho alternativo (ELSE)\nResultado anterior: ${result}`;
-          }
-        }
-
-        setExecutionSteps(prev => prev.map(step => 
-          step.id === node.id ? { ...step, status: 'success', result } : step
-        ));
-      } catch (error) {
-        setExecutionSteps(prev => prev.map(step => 
-          step.id === node.id ? { ...step, status: 'error', error: error.message } : step
-        ));
         toast({
           title: "Erro na execução",
-          description: `Falha ao executar o agente ${node.data.label}: ${error.message}`,
+          description: result.error || "Falha ao executar o fluxo",
           variant: "destructive"
         });
-        return;
       }
-    }
+    } catch (error) {
+      // Atualizar steps como erro
+      setExecutionSteps(prev => prev.map(step => ({
+        ...step,
+        status: 'error' as const,
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
+      })));
 
-    setFinalResult(String(result));
-    toast({
-      title: "Execução concluída",
-      description: "Fluxo de IA executado com sucesso!"
-    });
+      toast({
+        title: "Erro na execução",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive"
+      });
+    }
   };
 
   const selectedNode = selectedNodeId 
