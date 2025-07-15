@@ -148,6 +148,43 @@ export const PrototypeEditor = () => {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onKeyDown]);
 
+  // Exportar nós para JSON
+  const exportNodesToJson = () => {
+    const exportData = {
+      nodes: nodes.map(node => ({
+        id: node.id,
+        type: node.type,
+        position: node.position,
+        data: node.data
+      })),
+      edges: edges.map(edge => ({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        type: edge.type,
+        animated: edge.animated,
+        style: edge.style
+      })),
+      exportedAt: new Date().toISOString()
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `fluxo-ia-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Exportação concluída",
+      description: "Fluxo exportado para JSON com sucesso!"
+    });
+  };
+
   // Executar fluxo de IA
   const executeFlow = async () => {
     const openaiKey = localStorage.getItem('openai_api_key');
@@ -305,7 +342,7 @@ export const PrototypeEditor = () => {
         {/* Toolbar */}
         <EditorToolbar 
           onSave={() => console.log('Salvando projeto...')}
-          onExport={() => console.log('Exportando...')}
+          onExport={exportNodesToJson}
           onUndo={() => console.log('Desfazer')}
           onRedo={() => console.log('Refazer')}
           onExecute={executeFlow}
