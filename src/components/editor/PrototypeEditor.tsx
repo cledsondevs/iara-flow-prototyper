@@ -239,7 +239,7 @@ export const PrototypeEditor = () => {
 
     try {
       // Executar fluxo via API
-      const result = await apiService.executeFlowDirect(flowData, userInput);
+      const result = await apiService.executeFlowDirect(flowData, userInput as string);
 
       if (result.success && result.data) {
         // Atualizar steps como sucesso
