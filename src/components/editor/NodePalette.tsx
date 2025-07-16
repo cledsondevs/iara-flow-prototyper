@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow, FlaskConical } from 'lucide-react';
 
 interface NodePaletteProps {
   onAddNode: (type: string, data: any) => void;
@@ -23,6 +23,21 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
         model: 'GPT-4',
         temperature: 0.7,
         instructions: 'Assistente conversacional para suporte ao cliente'
+      }
+    },
+    {
+      id: 'langchain-agent',
+      label: 'LangChain Agent',
+      icon: FlaskConical,
+      description: 'Agente com ferramentas',
+      color: 'text-pink-600',
+      data: {
+        label: 'LangChain Agent',
+        agentType: 'langchain_agent',
+        provider: 'gemini',
+        model: 'gemini-1.5-flash',
+        temperature: 0.7,
+        instructions: 'Agente inteligente que pode decidir usar ferramentas externas'
       }
     },
     {
@@ -279,3 +294,4 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
     </Card>
   );
 };
+
