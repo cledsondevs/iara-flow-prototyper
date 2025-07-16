@@ -19,6 +19,9 @@ interface EditorToolbarProps {
   onRedo: () => void;
   onExecute: () => void;
   onConfig: () => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  zoomLevel: number;
 }
 
 export const EditorToolbar = ({ 
@@ -27,7 +30,10 @@ export const EditorToolbar = ({
   onUndo, 
   onRedo, 
   onExecute,
-  onConfig 
+  onConfig,
+  onZoomIn,
+  onZoomOut,
+  zoomLevel
 }: EditorToolbarProps) => {
   return (
     <div className="h-14 border-b border-border bg-card px-4 flex items-center justify-between">
@@ -83,18 +89,20 @@ export const EditorToolbar = ({
           <Button
             variant="ghost"
             size="sm"
+            onClick={onZoomOut}
             className="h-8 w-8 p-0"
           >
             <ZoomOut className="w-4 h-4" />
           </Button>
           
           <span className="text-sm text-muted-foreground font-mono min-w-[50px] text-center">
-            100%
+            {Math.round(zoomLevel * 100)}%
           </span>
           
           <Button
             variant="ghost"
             size="sm"
+            onClick={onZoomIn}
             className="h-8 w-8 p-0"
           >
             <ZoomIn className="w-4 h-4" />

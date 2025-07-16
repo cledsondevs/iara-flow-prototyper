@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
+  ReactFlowProvider,
   MiniMap,
   Controls,
   Background,
@@ -11,6 +12,7 @@ import {
   Edge,
   Node,
   BackgroundVariant,
+  useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import './editor-styles.css';
@@ -72,7 +74,7 @@ const initialNodes: Node[] = [
 
 const initialEdges: Edge[] = [];
 
-export const PrototypeEditor = () => {
+const PrototypeEditorInner = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -82,6 +84,8 @@ export const PrototypeEditor = () => {
   const [executionSteps, setExecutionSteps] = useState<any[]>([]);
   const [finalResult, setFinalResult] = useState<string>('');
   const { toast } = useToast();
+  const { zoomIn, zoomOut, getZoom } = useReactFlow();
+  const [zoomLevel, setZoomLevel] = useState(0.8);
 
   // Conectar nós
   const onConnect = useCallback(
@@ -285,6 +289,16 @@ export const PrototypeEditor = () => {
     }
   };
 
+  const handleZoomIn = useCallback(() => {
+    zoomIn();
+    setTimeout(() => setZoomLevel(getZoom()), 100);
+  }, [zoomIn, getZoom]);
+
+  const handleZoomOut = useCallback(() => {
+    zoomOut();
+    setTimeout(() => setZoomLevel(getZoom()), 100);
+  }, [zoomOut, getZoom]);
+
   const selectedNode = selectedNodeId 
     ? nodes.find(node => node.id === selectedNodeId) 
     : null;
@@ -306,6 +320,9 @@ export const PrototypeEditor = () => {
           onRedo={() => console.log('Refazer')}
           onExecute={executeFlow}
           onConfig={() => setShowConfig(true)}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          zoomLevel={zoomLevel}
         />
 
         {/* Canvas do Editor com Device Frame */}
@@ -385,5 +402,13 @@ export const PrototypeEditor = () => {
         finalResult={finalResult}
       />
     </div>
+  );
+};
+
+export const PrototypeEditor = () => {
+  return (
+    <ReactFlowProvider>
+      <PrototypeEditorInner />
+    </ReactFlowProvider>
   );
 };
