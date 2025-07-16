@@ -188,11 +188,31 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
         position={Position.Top}
         className="w-2 h-2 !bg-primary border border-card"
       />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="w-2 h-2 !bg-primary border border-card"
-      />
+      
+      {data.dataType === 'boolean' ? (
+        <>
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            id="true"
+            className="w-3 h-3 bg-green-500 border-2 border-green-600"
+            style={{ left: '25%' }}
+          />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            id="false"
+            className="w-3 h-3 bg-red-500 border-2 border-red-600"
+            style={{ left: '75%' }}
+          />
+        </>
+      ) : (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          className="w-2 h-2 !bg-primary border border-card"
+        />
+      )}
     </div>
   );
 });
