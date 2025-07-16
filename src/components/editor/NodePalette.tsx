@@ -83,6 +83,18 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       }
     },
     {
+      id: 'boolean-data',
+      label: 'True/False',
+      icon: Search,
+      description: 'Valor booleano',
+      color: 'text-indigo-600',
+      data: {
+        label: 'Boolean',
+        dataType: 'boolean',
+        value: true
+      }
+    },
+    {
       id: 'output-data',
       label: 'Agent Output',
       icon: FileText,

@@ -20,10 +20,11 @@ export interface AgentNodeData extends BaseNodeData {
 }
 
 export interface DataNodeData extends BaseNodeData {
-  dataType: 'input' | 'output' | 'database' | 'api' | 'file';
+  dataType: 'input' | 'output' | 'database' | 'api' | 'file' | 'boolean';
   format?: string;
   size?: string;
   userInput?: string;
+  value?: boolean;
 }
 
 // Tipos de dados para os nós de lógica
@@ -104,6 +105,7 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
       case 'database': return Database;
       case 'api': return Code;
       case 'file': return FileText;
+      case 'boolean': return Search;
       default: return Database;
     }
   };
@@ -117,6 +119,7 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
       case 'database': return 'text-purple-600';
       case 'api': return 'text-orange-600';
       case 'file': return 'text-gray-600';
+      case 'boolean': return 'text-indigo-600';
       default: return 'text-gray-600';
     }
   };
@@ -146,6 +149,31 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
             onChange={handleInputChange}
             className="nodrag min-h-[60px] text-xs"
           />
+        </div>
+      )}
+      
+      {data.dataType === 'boolean' && (
+        <div className="mt-2 flex items-center gap-2">
+          <button
+            className={`px-3 py-1 text-xs rounded ${data.value === true ? 'bg-green-500 text-white' : 'bg-gray-200'}`}
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('updateNodeData', {
+                detail: { nodeId: id, updates: { value: true } }
+              }));
+            }}
+          >
+            TRUE
+          </button>
+          <button
+            className={`px-3 py-1 text-xs rounded ${data.value === false ? 'bg-red-500 text-white' : 'bg-gray-200'}`}
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('updateNodeData', {
+                detail: { nodeId: id, updates: { value: false } }
+              }));
+            }}
+          >
+            FALSE
+          </button>
         </div>
       )}
       

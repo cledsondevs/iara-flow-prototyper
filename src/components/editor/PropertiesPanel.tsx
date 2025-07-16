@@ -180,6 +180,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="input">Entrada</SelectItem>
+                    <SelectItem value="boolean">Boolean (True/False)</SelectItem>
                     <SelectItem value="output">Saída</SelectItem>
                     <SelectItem value="database">Base de Dados</SelectItem>
                     <SelectItem value="api">API</SelectItem>
