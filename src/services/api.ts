@@ -30,10 +30,8 @@ export interface FlowExecution {
 
 export interface ExecutionResult {
   success: boolean;
-  output?: string;
-  execution_path?: string[];
-  node_outputs?: Record<string, any>;
-  validation_warnings?: string[];
+  output?: string; // A saída principal do agente
+  message?: string; // Mensagem de sucesso do agente
   error?: string;
 }
 
@@ -158,12 +156,13 @@ class ApiService {
   }
 
   // Método para executar fluxo diretamente (sem salvar no DynamoDB)
-  async executeFlowDirect(flowData: FlowData, input: string = ""): Promise<ApiResponse<ExecutionResult>> {
-    return this.request('/flow/execute', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        flow_data: flowData,
-        input: input
+  async executeFlowDirect(flowData: FlowData, input: string = "", userId: string): Promise<ApiResponse<ExecutionResult>> {
+    return this.request("/flow/execute", {
+      method: "POST",
+      body: JSON.stringify({
+        flow_data: flowData, // Mantido para compatibilidade, mas o backend usa apenas input e user_id
+        input: input,
+        user_id: userId,
       }),
     });
   }
