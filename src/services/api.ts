@@ -1,5 +1,5 @@
 // Configuração da API
-const API_BASE_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://iara-flow-bff.vercel.app/api';
 
 export interface FlowData {
   nodes: any[];
@@ -26,6 +26,15 @@ export interface FlowExecution {
   error_message?: string;
   started_at: string;
   completed_at?: string;
+}
+
+export interface ExecutionResult {
+  success: boolean;
+  output?: string;
+  execution_path?: string[];
+  node_outputs?: Record<string, any>;
+  validation_warnings?: string[];
+  error?: string;
 }
 
 export interface ApiResponse<T> {
@@ -148,49 +157,39 @@ class ApiService {
     return this.request(`/executions/${executionId}`);
   }
 
-  // Método para executar fluxo diretamente (sem salvar)
-  async executeFlowDirect(flowData: FlowData, input: string): Promise<ApiResponse<{
-    execution: FlowExecution;
-    output?: string;
-    error?: string;
-  }>> {
-    // Primeiro criar um fluxo temporário
-    const createResult = await this.createFlow({
-      name: `Fluxo Temporário ${Date.now()}`,
-      description: 'Fluxo criado para execução direta',
-      flow_data: flowData,
+  // Método para executar fluxo diretamente (sem salvar no DynamoDB)
+  async executeFlowDirect(flowData: FlowData, input: string = ""): Promise<ApiResponse<ExecutionResult>> {
+    return this.request('/flow/execute', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        flow_data: flowData,
+        input: input
+      }),
     });
+  }
 
-    if (!createResult.success || !createResult.data) {
-      return {
-        success: false,
-        error: createResult.error || 'Erro ao criar fluxo temporário',
-      };
-    }
+  // Método para validar fluxo diretamente (sem salvar no DynamoDB)
+  async validateFlowDirect(flowData: FlowData): Promise<ApiResponse<{
+    validation: {
+      valid: boolean;
+      errors: string[];
+      warnings: string[];
+    };
+  }>> {
+    return this.request('/flow/validate', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        flow_data: flowData
+      }),
+    });
+  }
 
-    const flowId = createResult.data.flow.id;
-
-    try {
-      // Executar o fluxo
-      const executeResult = await this.executeFlow(flowId, input);
-
-      // Deletar o fluxo temporário (opcional, pode manter para histórico)
-      // await this.deleteFlow(flowId);
-
-      return executeResult;
-    } catch (error) {
-      // Tentar deletar o fluxo temporário mesmo em caso de erro
-      try {
-        await this.deleteFlow(flowId);
-      } catch (deleteError) {
-        console.warn('Erro ao deletar fluxo temporário:', deleteError);
-      }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Erro na execução',
-      };
-    }
+  // Método para testar se a API está funcionando
+  async testConnection(): Promise<ApiResponse<{
+    message: string;
+    timestamp: string;
+  }>> {
+    return this.request('/flow/test');
   }
 }
 

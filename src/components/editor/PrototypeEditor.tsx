@@ -303,6 +303,33 @@ const PrototypeEditorInner = () => {
     ? nodes.find(node => node.id === selectedNodeId) 
     : null;
 
+  useEffect(() => {
+    const handleLoadFlow = (event: MessageEvent) => {
+      if (event.data.type === 'loadFlow') {
+        const { flowData } = event.data;
+        setNodes(flowData.nodes);
+        setEdges(flowData.edges);
+        setShowWelcome(false);
+      }
+    };
+
+    const handleClearFlow = (event: MessageEvent) => {
+      if (event.data.type === 'clearFlow') {
+        setNodes([]);
+        setEdges([]);
+        setShowWelcome(true);
+      }
+    };
+
+    window.addEventListener('message', handleLoadFlow);
+    window.addEventListener('message', handleClearFlow);
+
+    return () => {
+      window.removeEventListener('message', handleLoadFlow);
+      window.removeEventListener('message', handleClearFlow);
+    };
+  }, [setNodes, setEdges]);
+
   return (
     <div className="h-screen flex bg-background relative">
       {/* Paleta de Nós */}
@@ -412,3 +439,4 @@ export const PrototypeEditor = () => {
     </ReactFlowProvider>
   );
 };
+

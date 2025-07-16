@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow, FlaskConical } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
@@ -11,7 +11,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
@@ -44,6 +44,7 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'retriever': return Search;
       case 'generator': return Zap;
       case 'processor': return Cpu;
+      case 'langchain_agent': return FlaskConical;
       default: return Bot;
     }
   };
@@ -57,6 +58,7 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'retriever': return 'text-green-600';
       case 'generator': return 'text-orange-600';
       case 'processor': return 'text-red-600';
+      case 'langchain_agent': return 'text-pink-600';
       default: return 'text-gray-600';
     }
   };
@@ -319,3 +321,5 @@ export const LogicNode = memo(({ data, id }: NodeProps & { data: LogicNodeData; 
 
 AgentNode.displayName = 'AgentNode';
 DataNode.displayName = 'DataNode';
+
+
