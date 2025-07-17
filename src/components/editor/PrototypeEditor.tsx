@@ -84,6 +84,7 @@ const PrototypeEditorInner = () => {
   const [showExecution, setShowExecution] = useState(false);
   const [executionSteps, setExecutionSteps] = useState<any[]>([]);
   const [finalResult, setFinalResult] = useState<string>('');
+  const [isExecuting, setIsExecuting] = useState(false);
   const { toast } = useToast();
   const { zoomIn, zoomOut, getZoom } = useReactFlow();
   const [zoomLevel, setZoomLevel] = useState(0.8);
@@ -94,7 +95,7 @@ const PrototypeEditorInner = () => {
     (params: Connection) => setEdges((eds) => addEdge({
       ...params,
       type: 'smoothstep',
-      animated: true,
+      animated: false,
       style: { strokeWidth: 2 }
     }, eds)),
     [setEdges],
@@ -220,6 +221,10 @@ const PrototypeEditorInner = () => {
     setExecutionSteps([]);
     setFinalResult('');
     setShowExecution(true);
+    setIsExecuting(true);
+    
+    // Animar edges durante execução
+    setEdges(prev => prev.map(edge => ({ ...edge, animated: true })));
 
     // Preparar dados do fluxo
     const flowData = {
@@ -297,6 +302,10 @@ const PrototypeEditorInner = () => {
         description: error instanceof Error ? error.message : "Erro desconhecido",
         variant: "destructive"
       });
+    } finally {
+      // Parar animação das edges quando execução terminar
+      setIsExecuting(false);
+      setEdges(prev => prev.map(edge => ({ ...edge, animated: false })));
     }
   };
 
