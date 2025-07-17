@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   Save,
   Download,
@@ -122,6 +123,10 @@ export const EditorToolbar = ({
 
       {/* Grupo de ações secundárias */}
       <div className="flex items-center gap-2">
+        <ThemeToggle />
+        
+        <Separator orientation="vertical" className="h-6" />
+        
         <Button
           variant="outline"
           size="sm"
@@ -136,7 +141,7 @@ export const EditorToolbar = ({
           variant="default"
           size="sm"
           onClick={onExecute}
-          className="h-8 px-3 bg-primary hover:bg-primary-hover"
+          className="h-8 px-3 bg-primary hover:bg-primary/90"
         >
           <Play className="w-4 h-4 mr-2" />
           Executar
