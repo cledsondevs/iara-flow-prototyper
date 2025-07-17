@@ -358,7 +358,7 @@ const PrototypeEditorInner = () => {
       </div>
 
       {/* Editor Principal */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col ${showExecution ? 'mr-96' : ''} transition-all duration-300`}>
         {/* Toolbar */}
         <EditorToolbar 
           onSave={() => console.log('Salvando projeto...')}

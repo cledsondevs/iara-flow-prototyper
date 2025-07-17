@@ -35,8 +35,8 @@ export const ExecutionResult = ({ open, onClose, steps, finalResult }: Execution
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[80vh] flex flex-col">
+    <div className="fixed top-0 right-0 h-full w-96 bg-background border-l border-border z-40 flex flex-col shadow-xl">
+      <Card className="h-full flex flex-col border-0 rounded-none shadow-none">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
