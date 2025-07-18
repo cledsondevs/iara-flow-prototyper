@@ -29,6 +29,7 @@ export interface DataNodeData extends BaseNodeData {
   size?: string;
   userInput?: string;
   value?: boolean;
+  apiUrl?: string; // Adiciona URL da API para o tipo External API
 }
 
 // Tipos de dados para os nós de lógica

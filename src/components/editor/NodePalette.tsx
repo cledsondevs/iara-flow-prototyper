@@ -91,9 +91,7 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       data: {
         label: 'Review Collector',
         agentType: 'review_collector',
-        instructions: 'Coleta reviews de Google Play e App Store',
-        appId: '',
-        store: 'google_play'
+        instructions: 'Coleta reviews de Google Play e App Store'
       }
     },
     {
@@ -208,7 +206,8 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       data: {
         label: 'External API',
         dataType: 'api',
-        format: 'application/json'
+        format: 'application/json',
+        apiUrl: ''
       }
     }
   ];

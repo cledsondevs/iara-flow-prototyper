@@ -176,19 +176,11 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
               )}
 
               {agentData.agentType === 'review_collector' && (
-                <>
-                  <div className="space-y-2">
-                    <Label>URL da API</Label>
-                    <Input
-                      value={(agentData as any).apiUrl || ''}
-                      onChange={(e) => updateField('apiUrl', e.target.value)}
-                      placeholder="https://bff-analyse.vercel.app/api/apps/{id}/reviews?store={store}"
-                    />
-                    <div className="text-xs text-muted-foreground">
-                      URL completa da API que será chamada (ex: https://bff-analyse.vercel.app/api/apps/com.itau.investimentos/reviews?store=google_play)
-                    </div>
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground">
+                    O Review Collector receberá a URL da API através de uma conexão com um nó External API.
                   </div>
-                </>
+                </div>
               )}
 
               {agentData.agentType === 'email_sender' && (
@@ -246,6 +238,20 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                   </SelectContent>
                 </Select>
               </div>
+
+              {dataData.dataType === 'api' && (
+                <div className="space-y-2">
+                  <Label>URL da API</Label>
+                  <Input
+                    value={(dataData as any).apiUrl || ''}
+                    onChange={(e) => updateField('apiUrl', e.target.value)}
+                    placeholder="https://bff-analyse.vercel.app/api/apps/com.itau.investimentos/reviews?store=google_play"
+                  />
+                  <div className="text-xs text-muted-foreground">
+                    URL completa da API que será chamada
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Formato</Label>
