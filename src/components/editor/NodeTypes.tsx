@@ -11,7 +11,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
@@ -45,6 +45,10 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'generator': return Zap;
       case 'processor': return Cpu;
       case 'langchain_agent': return FlaskConical;
+      case 'review_collector': return FileText; // Ícone para coletor de reviews
+      case 'sentiment_analyzer': return Brain; // Ícone para analisador de sentimento
+      case 'backlog_generator': return Workflow; // Ícone para gerador de backlog
+      case 'memory_manager': return Database; // Ícone para gerenciador de memória
       default: return Bot;
     }
   };
@@ -59,6 +63,10 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'generator': return 'text-orange-600';
       case 'processor': return 'text-red-600';
       case 'langchain_agent': return 'text-pink-600';
+      case 'review_collector': return 'text-cyan-600'; // Cor para coletor de reviews
+      case 'sentiment_analyzer': return 'text-indigo-600'; // Cor para analisador de sentimento
+      case 'backlog_generator': return 'text-lime-600'; // Cor para gerador de backlog
+      case 'memory_manager': return 'text-amber-600'; // Cor para gerenciador de memória
       default: return 'text-gray-600';
     }
   };

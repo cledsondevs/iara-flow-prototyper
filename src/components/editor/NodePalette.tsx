@@ -81,6 +81,55 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
         temperature: 0.8,
         instructions: 'Gera conteúdo criativo e original'
       }
+    },
+    {
+      id: 'review-collector-agent',
+      label: 'Review Collector',
+      icon: FileText,
+      description: 'Coleta reviews de lojas de aplicativos',
+      color: 'text-cyan-600',
+      data: {
+        label: 'Review Collector',
+        agentType: 'review_collector',
+        instructions: 'Coleta reviews de Google Play e App Store'
+      }
+    },
+    {
+      id: 'sentiment-analyzer-agent',
+      label: 'Sentiment Analyzer',
+      icon: Brain,
+      description: 'Analisa sentimento e tópicos de reviews',
+      color: 'text-indigo-600',
+      data: {
+        label: 'Sentiment Analyzer',
+        agentType: 'sentiment_analyzer',
+        model: 'OpenAI',
+        instructions: 'Analisa o sentimento e extrai tópicos de reviews'
+      }
+    },
+    {
+      id: 'backlog-generator-agent',
+      label: 'Backlog Generator',
+      icon: Workflow,
+      description: 'Gera itens de backlog automaticamente',
+      color: 'text-lime-600',
+      data: {
+        label: 'Backlog Generator',
+        agentType: 'backlog_generator',
+        instructions: 'Cria itens de backlog baseados em reviews'
+      }
+    },
+    {
+      id: 'memory-manager-agent',
+      label: 'Memory Manager',
+      icon: Database,
+      description: 'Gerencia a memória de longo prazo do agente',
+      color: 'text-amber-600',
+      data: {
+        label: 'Memory Manager',
+        agentType: 'memory_manager',
+        instructions: 'Otimiza o agente com base em padrões históricos'
+      }
     }
   ];
 

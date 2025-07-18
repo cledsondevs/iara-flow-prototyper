@@ -26,7 +26,7 @@ import { ConfigDialog } from './ConfigDialog';
 import { ExecutionResult } from './ExecutionResult';
 import { useToast } from '@/hooks/use-toast';
 import { apiService } from '@/services/api';
-import { useAuth } from '@/hooks/useAuth';
+
 
 // Tipos de nós disponíveis
 const nodeTypes = {
@@ -88,7 +88,7 @@ const PrototypeEditorInner = () => {
   const { toast } = useToast();
   const { zoomIn, zoomOut, getZoom } = useReactFlow();
   const [zoomLevel, setZoomLevel] = useState(0.8);
-  const { user } = useAuth(); // Obter o usuário logado
+  const mockUserId = "mock_user_id"; // Usuário mock fixo
 
   // Conectar nós
   const onConnect = useCallback(
@@ -248,18 +248,9 @@ const PrototypeEditorInner = () => {
     }));
     setExecutionSteps(steps);
 
-    if (!user || !user.id) {
-      toast({
-        title: "Usuário não autenticado",
-        description: "Por favor, faça login para executar o fluxo.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
       // Executar fluxo via API
-      const result = await apiService.executeFlowDirect(flowData, userInput as string, user.id);
+      const result = await apiService.executeFlowDirect(flowData, userInput as string, mockUserId);
 
       if (result.success && result.data) {
         // Atualizar steps como sucesso

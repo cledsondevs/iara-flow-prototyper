@@ -1,5 +1,5 @@
 // Configuração da API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://iara-flow-bff.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://54.162.170.1:5000/api';
 
 export interface FlowData {
   nodes: any[];
