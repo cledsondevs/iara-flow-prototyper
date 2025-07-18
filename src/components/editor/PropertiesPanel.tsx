@@ -91,48 +91,52 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label>Provedor de IA</Label>
-                <Select 
-                  value={agentData.provider || 'openai'} 
-                  onValueChange={(value) => updateField('provider', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o provedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="openai">OpenAI</SelectItem>
-                    <SelectItem value="gemini">Google Gemini</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {agentData.agentType !== 'review_collector' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Provedor de IA</Label>
+                    <Select 
+                      value={agentData.provider || 'openai'} 
+                      onValueChange={(value) => updateField('provider', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o provedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="openai">OpenAI</SelectItem>
+                        <SelectItem value="gemini">Google Gemini</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="space-y-2">
-                <Label>Modelo</Label>
-                <Select 
-                  value={agentData.model || ''} 
-                  onValueChange={(value) => updateField('model', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o modelo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {agentData.provider === 'gemini' ? (
-                      <>
-                        <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
-                        <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                        <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
-                      </>
-                    ) : (
-                      <>
-                        <SelectItem value="gpt-4">GPT-4</SelectItem>
-                        <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
-                        <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+                  <div className="space-y-2">
+                    <Label>Modelo</Label>
+                    <Select 
+                      value={agentData.model || ''} 
+                      onValueChange={(value) => updateField('model', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o modelo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {agentData.provider === 'gemini' ? (
+                          <>
+                            <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
+                            <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
+                            <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
+                          </>
+                        ) : (
+                          <>
+                            <SelectItem value="gpt-4">GPT-4</SelectItem>
+                            <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
+                            <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
 
               <div className="space-y-2">
                 <Label>Instruções</Label>
@@ -144,27 +148,31 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Temperatura: {agentData.temperature || 0.7}</Label>
-                <Slider
-                  value={[agentData.temperature || 0.7]}
-                  onValueChange={(value) => updateField('temperature', value[0])}
-                  max={2}
-                  min={0}
-                  step={0.1}
-                  className="w-full"
-                />
-              </div>
+              {agentData.agentType !== 'review_collector' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Temperatura: {agentData.temperature || 0.7}</Label>
+                    <Slider
+                      value={[agentData.temperature || 0.7]}
+                      onValueChange={(value) => updateField('temperature', value[0])}
+                      max={2}
+                      min={0}
+                      step={0.1}
+                      className="w-full"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label>Max Tokens</Label>
-                <Input
-                  type="number"
-                  value={agentData.maxTokens || 500}
-                  onChange={(e) => updateField('maxTokens', parseInt(e.target.value))}
-                  placeholder="500"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label>Max Tokens</Label>
+                    <Input
+                      type="number"
+                      value={agentData.maxTokens || 500}
+                      onChange={(e) => updateField('maxTokens', parseInt(e.target.value))}
+                      placeholder="500"
+                    />
+                  </div>
+                </>
+              )}
 
               {agentData.agentType === 'review_collector' && (
                 <>
