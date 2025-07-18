@@ -11,12 +11,16 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
   maxTokens?: number;
   instructions?: string;
+  // Email-specific properties
+  toEmail?: string;
+  subject?: string;
+  emailBody?: string;
 }
 
 export interface DataNodeData extends BaseNodeData {
@@ -49,6 +53,7 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'sentiment_analyzer': return Brain; // Ícone para analisador de sentimento
       case 'backlog_generator': return Workflow; // Ícone para gerador de backlog
       case 'memory_manager': return Database; // Ícone para gerenciador de memória
+      case 'email_sender': return MessageSquare; // Ícone para envio de e-mail
       default: return Bot;
     }
   };
@@ -67,6 +72,7 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
       case 'sentiment_analyzer': return 'text-indigo-600'; // Cor para analisador de sentimento
       case 'backlog_generator': return 'text-lime-600'; // Cor para gerador de backlog
       case 'memory_manager': return 'text-amber-600'; // Cor para gerenciador de memória
+      case 'email_sender': return 'text-teal-600'; // Cor para envio de e-mail
       default: return 'text-gray-600';
     }
   };

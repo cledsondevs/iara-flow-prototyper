@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow, FlaskConical } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow, FlaskConical, Mail } from 'lucide-react';
 
 interface NodePaletteProps {
   onAddNode: (type: string, data: any) => void;
@@ -131,6 +131,21 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
         label: 'Memory Manager',
         agentType: 'memory_manager',
         instructions: 'Otimiza o agente com base em padrões históricos'
+      }
+    },
+    {
+      id: 'email-sender-agent',
+      label: 'Email Sender',
+      icon: Mail,
+      description: 'Envia emails automaticamente',
+      color: 'text-teal-600',
+      data: {
+        label: 'Email Sender',
+        agentType: 'email_sender',
+        instructions: 'Envia emails para destinatários específicos',
+        toEmail: '',
+        subject: '',
+        emailBody: ''
       }
     }
   ];

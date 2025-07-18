@@ -87,11 +87,12 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     <SelectItem value="generator">Gerador</SelectItem>
                     <SelectItem value="processor">Processador</SelectItem>
                     <SelectItem value="review_collector">Coletor de Reviews</SelectItem>
+                    <SelectItem value="email_sender">Envio de Email</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {agentData.agentType !== 'review_collector' && (
+              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && (
                 <>
                   <div className="space-y-2">
                     <Label>Provedor de IA</Label>
@@ -148,7 +149,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 />
               </div>
 
-              {agentData.agentType !== 'review_collector' && (
+              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && (
                 <>
                   <div className="space-y-2">
                     <Label>Temperatura: {agentData.temperature || 0.7}</Label>
@@ -202,6 +203,38 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                         <SelectItem value="app_store">App Store</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </>
+              )}
+
+              {agentData.agentType === 'email_sender' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Email do Destinatário</Label>
+                    <Input
+                      value={(agentData as any).toEmail || ''}
+                      onChange={(e) => updateField('toEmail', e.target.value)}
+                      placeholder="destinatario@email.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Assunto</Label>
+                    <Input
+                      value={(agentData as any).subject || ''}
+                      onChange={(e) => updateField('subject', e.target.value)}
+                      placeholder="Assunto do email"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Corpo do Email</Label>
+                    <Textarea
+                      value={(agentData as any).emailBody || ''}
+                      onChange={(e) => updateField('emailBody', e.target.value)}
+                      placeholder="Conteúdo do email..."
+                      rows={4}
+                    />
                   </div>
                 </>
               )}
