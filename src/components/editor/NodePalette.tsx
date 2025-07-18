@@ -91,7 +91,9 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       data: {
         label: 'Review Collector',
         agentType: 'review_collector',
-        instructions: 'Coleta reviews de Google Play e App Store'
+        instructions: 'Coleta reviews de Google Play e App Store',
+        appId: '',
+        store: 'google_play'
       }
     },
     {

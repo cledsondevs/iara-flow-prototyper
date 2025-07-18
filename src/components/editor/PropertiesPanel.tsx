@@ -86,6 +86,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     <SelectItem value="retriever">Recuperador</SelectItem>
                     <SelectItem value="generator">Gerador</SelectItem>
                     <SelectItem value="processor">Processador</SelectItem>
+                    <SelectItem value="review_collector">Coletor de Reviews</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -164,6 +165,38 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                   placeholder="500"
                 />
               </div>
+
+              {agentData.agentType === 'review_collector' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>App ID</Label>
+                    <Input
+                      value={(agentData as any).appId || ''}
+                      onChange={(e) => updateField('appId', e.target.value)}
+                      placeholder="ID do aplicativo"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      ID do aplicativo na loja (ex: com.example.app)
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Loja</Label>
+                    <Select 
+                      value={(agentData as any).store || 'google_play'} 
+                      onValueChange={(value) => updateField('store', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a loja" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="google_play">Google Play</SelectItem>
+                        <SelectItem value="app_store">App Store</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
             </>
           )}
 
