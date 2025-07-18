@@ -178,31 +178,15 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
               {agentData.agentType === 'review_collector' && (
                 <>
                   <div className="space-y-2">
-                    <Label>App ID</Label>
+                    <Label>URL da API</Label>
                     <Input
-                      value={(agentData as any).appId || ''}
-                      onChange={(e) => updateField('appId', e.target.value)}
-                      placeholder="ID do aplicativo"
+                      value={(agentData as any).apiUrl || ''}
+                      onChange={(e) => updateField('apiUrl', e.target.value)}
+                      placeholder="https://bff-analyse.vercel.app/api/apps/{id}/reviews?store={store}"
                     />
                     <div className="text-xs text-muted-foreground">
-                      ID do aplicativo na loja (ex: com.example.app)
+                      URL completa da API que será chamada (ex: https://bff-analyse.vercel.app/api/apps/com.itau.investimentos/reviews?store=google_play)
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Loja</Label>
-                    <Select 
-                      value={(agentData as any).store || 'google_play'} 
-                      onValueChange={(value) => updateField('store', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a loja" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="google_play">Google Play</SelectItem>
-                        <SelectItem value="app_store">App Store</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </>
               )}
