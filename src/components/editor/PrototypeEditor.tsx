@@ -35,43 +35,8 @@ const nodeTypes = {
   logic: LogicNode,
 };
 
-// Configuração inicial de nós e conexões
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    type: 'agent',
-    position: { x: 300, y: 100 },
-    data: {
-      label: 'Chat Assistant',
-      agentType: 'chatbot',
-      provider: 'openai',
-      model: 'gpt-4',
-      temperature: 0.7,
-      instructions: 'Assistente conversacional para suporte ao cliente'
-    } as AgentNodeData,
-  },
-  {
-    id: '2',
-    type: 'data',
-    position: { x: 100, y: 200 },
-    data: {
-      label: 'User Input',
-      dataType: 'input',
-      format: 'text/plain'
-    } as DataNodeData,
-  },
-  {
-    id: '3',
-    type: 'logic',
-    position: { x: 200, y: 300 },
-    data: {
-      label: 'If Condition',
-      conditionType: 'if',
-      condition: 'length > 10',
-      description: 'Verifica se a resposta tem mais de 10 caracteres'
-    } as LogicNodeData,
-  },
-];
+// Configuração inicial de nós e conexões - board vazio
+const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
 

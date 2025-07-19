@@ -13,12 +13,12 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
       <Card className="max-w-md w-full shadow-xl border-primary/20">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex items-center justify-center">
-                <Lightbulb className="w-4 h-4 text-white" />
-              </div>
-              Bem-vindo ao Iara Hub
-            </CardTitle>
+              <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex items-center justify-center">
+                  <Lightbulb className="w-4 h-4 text-white" />
+                </div>
+                Bem-vindo ao Editor de Agentes IA
+              </CardTitle>
             <Button
               variant="ghost"
               size="sm"
@@ -29,7 +29,7 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
-            Editor visual para criação de protótipos com fluxo de nós
+            Editor visual para criação de fluxos de agentes de IA
           </p>
         </CardHeader>
 
@@ -40,9 +40,9 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
                 <Plus className="w-3 h-3 text-primary" />
               </div>
               <div>
-                <h4 className="text-sm font-medium">1. Adicione elementos</h4>
+                <h4 className="text-sm font-medium">1. Adicione agentes</h4>
                 <p className="text-xs text-muted-foreground">
-                  Use a paleta à esquerda para adicionar telas e componentes
+                  Use a paleta à esquerda para adicionar agentes de IA e componentes
                 </p>
               </div>
             </div>
@@ -52,9 +52,9 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
                 <MousePointer className="w-3 h-3 text-primary" />
               </div>
               <div>
-                <h4 className="text-sm font-medium">2. Conecte elementos</h4>
+                <h4 className="text-sm font-medium">2. Conecte agentes</h4>
                 <p className="text-xs text-muted-foreground">
-                  Arraste dos pontos de conexão para criar fluxos entre telas
+                  Arraste dos pontos de conexão para criar fluxos entre agentes
                 </p>
               </div>
             </div>
@@ -64,9 +64,9 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
                 <Smartphone className="w-3 h-3 text-primary" />
               </div>
               <div>
-                <h4 className="text-sm font-medium">3. Personalize propriedades</h4>
+                <h4 className="text-sm font-medium">3. Configure agentes</h4>
                 <p className="text-xs text-muted-foreground">
-                  Clique em qualquer elemento para editar suas propriedades
+                  Clique em qualquer agente para configurar suas propriedades e parâmetros
                 </p>
               </div>
             </div>
@@ -77,7 +77,7 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
               onClick={onClose}
               className="w-full bg-primary hover:bg-primary-hover"
             >
-              Começar a criar
+              Começar a criar agentes
             </Button>
           </div>
         </CardContent>
