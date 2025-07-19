@@ -176,4 +176,8 @@ Para atualizar o frontend no servidor após novas alterações no repositório G
     (Será solicitada a senha do root: `Bc180a?8`)
 
 Isso garantirá que a versão mais recente do seu frontend esteja sempre disponível no servidor.
+te
+
+:q
+jmsmsms
 
