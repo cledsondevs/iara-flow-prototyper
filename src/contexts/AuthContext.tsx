@@ -12,6 +12,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithMock: () => Promise<{ success: boolean; error?: string }>;
   register: (username: string, password: string, email: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -39,10 +40,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuth = async () => {
     setIsLoading(true);
     const sessionToken = authService.getSessionToken();
+    const isMockUser = localStorage.getItem('is_mock_user') === 'true';
     
     if (!sessionToken || !authService.isAuthenticated()) {
       setUser(null);
       setIsAuthenticated(false);
+      setIsLoading(false);
+      return;
+    }
+
+    // Se for usuário mock, não fazer verificação no servidor
+    if (isMockUser) {
+      const userId = localStorage.getItem('user_id');
+      if (userId) {
+        setUser({
+          id: parseInt(userId),
+          username: 'usuario_mock',
+          email: 'mock@exemplo.com',
+        });
+        setIsAuthenticated(true);
+      }
       setIsLoading(false);
       return;
     }
@@ -61,6 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('session_token');
         localStorage.removeItem('user_id');
         localStorage.removeItem('expires_at');
+        localStorage.removeItem('is_mock_user');
         setUser(null);
         setIsAuthenticated(false);
       }
@@ -93,6 +111,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithMock = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      // Simular um delay para parecer mais realista
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Criar usuário mock
+      const mockUser: User = {
+        id: 999,
+        username: 'usuario_mock',
+        email: 'mock@exemplo.com'
+      };
+      
+      // Simular token de sessão mock
+      const mockSessionToken = 'mock_session_token_' + Date.now();
+      const mockExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 horas
+      
+      // Salvar no localStorage para manter consistência
+      localStorage.setItem('session_token', mockSessionToken);
+      localStorage.setItem('user_id', String(mockUser.id));
+      localStorage.setItem('expires_at', mockExpiresAt);
+      localStorage.setItem('is_mock_user', 'true');
+      
+      setUser(mockUser);
+      setIsAuthenticated(true);
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Erro ao fazer login com usuário mock' };
+    }
+  };
+
   const register = async (username: string, password: string, email: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const result = await authService.register(username, password, email);
@@ -108,13 +157,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     const sessionToken = authService.getSessionToken();
-    if (sessionToken) {
+    const isMockUser = localStorage.getItem('is_mock_user') === 'true';
+    
+    if (sessionToken && !isMockUser) {
       try {
         await authService.logout(sessionToken);
       } catch (error) {
         console.error('Erro ao fazer logout:', error);
       }
     }
+    
+    // Limpar todos os dados do localStorage
+    localStorage.removeItem('session_token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('is_mock_user');
+    
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -128,6 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     isLoading,
     login,
+    loginWithMock,
     register,
     logout,
     checkAuth,
