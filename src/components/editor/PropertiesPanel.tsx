@@ -88,11 +88,12 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     <SelectItem value="processor">Processador</SelectItem>
                     <SelectItem value="review_collector">Coletor de Reviews</SelectItem>
                     <SelectItem value="email_sender">Envio de Email</SelectItem>
+                    <SelectItem value="postgresql_memory">Memória PostgreSQL</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && (
+              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && agentData.agentType !== 'postgresql_memory' && (
                 <>
                   <div className="space-y-2">
                     <Label>Provedor de IA</Label>
@@ -149,7 +150,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 />
               </div>
 
-              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && (
+              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && agentData.agentType !== 'postgresql_memory' && (
                 <>
                   <div className="space-y-2">
                     <Label>Temperatura: {agentData.temperature || 0.7}</Label>
@@ -211,6 +212,86 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                       placeholder="Conteúdo do email..."
                       rows={4}
                     />
+                  </div>
+                </>
+              )}
+
+              {agentData.agentType === 'postgresql_memory' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Connection String</Label>
+                    <Input
+                      value={(agentData as any).connectionString || ''}
+                      onChange={(e) => updateField('connectionString', e.target.value)}
+                      placeholder="postgresql://user:password@host:port/database"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      String de conexão com o banco PostgreSQL
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Nome da Tabela</Label>
+                    <Input
+                      value={(agentData as any).tableName || ''}
+                      onChange={(e) => updateField('tableName', e.target.value)}
+                      placeholder="nome_da_tabela"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Operação</Label>
+                    <Select 
+                      value={(agentData as any).operation || 'SELECT'} 
+                      onValueChange={(value) => updateField('operation', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a operação" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SELECT">SELECT</SelectItem>
+                        <SelectItem value="INSERT">INSERT</SelectItem>
+                        <SelectItem value="UPDATE">UPDATE</SelectItem>
+                        <SelectItem value="DELETE">DELETE</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Campos</Label>
+                    <Input
+                      value={(agentData as any).fields || '*'}
+                      onChange={(e) => updateField('fields', e.target.value)}
+                      placeholder="campo1, campo2, campo3 ou *"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      Campos para SELECT/INSERT/UPDATE (usar * para todos)
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Condições WHERE</Label>
+                    <Input
+                      value={(agentData as any).conditions || ''}
+                      onChange={(e) => updateField('conditions', e.target.value)}
+                      placeholder="id = 1, status = 'ativo'"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      Condições para SELECT/UPDATE/DELETE
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Query SQL Personalizada</Label>
+                    <Textarea
+                      value={(agentData as any).query || ''}
+                      onChange={(e) => updateField('query', e.target.value)}
+                      placeholder="SELECT * FROM tabela WHERE condicao"
+                      rows={4}
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      Se preenchida, a query personalizada será usada no lugar dos campos acima
+                    </div>
                   </div>
                 </>
               )}

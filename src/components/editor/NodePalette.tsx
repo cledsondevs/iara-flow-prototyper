@@ -145,6 +145,24 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
         subject: '',
         emailBody: ''
       }
+    },
+    {
+      id: 'postgresql-memory-agent',
+      label: 'PostgreSQL Memory',
+      icon: Database,
+      description: 'Conecta com banco PostgreSQL',
+      color: 'text-purple-600',
+      data: {
+        label: 'PostgreSQL Memory',
+        agentType: 'postgresql_memory',
+        instructions: 'Conecta com banco PostgreSQL para armazenar e recuperar dados',
+        connectionString: '',
+        tableName: '',
+        operation: 'SELECT',
+        query: '',
+        fields: '*',
+        conditions: ''
+      }
     }
   ];
 
