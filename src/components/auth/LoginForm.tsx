@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User } from 'lucide-react';
 
 interface LoginFormProps {
   onSwitchToRegister?: () => void;
@@ -16,7 +16,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loginWithMock } = useAuth();
+
+  // Verificar se está em modo de desenvolvimento
+  const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENABLE_MOCK_LOGIN === 'true';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +39,22 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
       }
     } catch (error) {
       setError('Erro de conexão');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMockLogin = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const result = await loginWithMock();
+      if (!result.success) {
+        setError(result.error || 'Erro no login mock');
+      }
+    } catch (error) {
+      setError('Erro ao fazer login com usuário mock');
     } finally {
       setIsLoading(false);
     }
@@ -88,6 +107,31 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
               'Entrar'
             )}
           </Button>
+          
+          {isDevelopment && (
+            <div className="space-y-2">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Modo Desenvolvimento
+                  </span>
+                </div>
+              </div>
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full" 
+                onClick={handleMockLogin}
+                disabled={isLoading}
+              >
+                <User className="mr-2 h-4 w-4" />
+                Usar Usuário Mock
+              </Button>
+            </div>
+          )}
           {onSwitchToRegister && (
             <div className="text-center">
               <Button
