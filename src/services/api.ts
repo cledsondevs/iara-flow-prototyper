@@ -165,28 +165,28 @@ export default apiService;
 
 
   // Métodos específicos para Review Agent
-  async collectReviews(packageName: string): Promise<ApiResponse<any>> {
+  async collectReviews = (packageName: string): Promise<ApiResponse<any>> => {
     return this.request(`/review-agent/apps/${packageName}/collect`, {
       method: 'POST',
     });
   }
 
-  async analyzeReviews(packageName: string): Promise<ApiResponse<any>> {
+  async analyzeReviews = (packageName: string): Promise<ApiResponse<any>> => {
     return this.request(`/review-agent/apps/${packageName}/analyze`, {
       method: 'POST',
     });
   }
 
-  async generateBacklog(packageName: string, days: number = 7): Promise<ApiResponse<any>> {
+  async generateBacklog = (packageName: string, days: number = 7): Promise<ApiResponse<any>> => {
     return this.request(`/review-agent/apps/${packageName}/backlog`, {
       method: 'POST',
       body: JSON.stringify({ days }),
     });
   }
 
-  async sendReportEmail(recipientEmail: string, reportData: any): Promise<ApiResponse<any>> {
-    return this.request('/review-agent/send-report-email', {
-      method: 'POST',
+  async sendReportEmail = (recipientEmail: string, reportData: any): Promise<ApiResponse<any>> => {
+    return this.request("/review-agent/send-report-email", {
+      method: "POST",
       body: JSON.stringify({
         recipient_email: recipientEmail,
         report_data: reportData,
@@ -195,7 +195,7 @@ export default apiService;
   }
 
   // Método para executar fluxo de review completo
-  async executeReviewFlow(packageName: string, managerEmail?: string): Promise<ApiResponse<any>> {
+  async executeReviewFlow = async (packageName: string, managerEmail?: string): Promise<ApiResponse<any>> => {
     try {
       // 1. Coletar reviews
       const collectResult = await this.collectReviews(packageName);
@@ -220,9 +220,9 @@ export default apiService;
         const reportData = {
           package_name: packageName,
           negative_reviews_count: backlogResult.data.summary.status_summary.negative.count,
-          main_themes: ['usabilidade', 'performance'], // Exemplo
+          main_themes: ["usabilidade", "performance"], // Exemplo
           critical_reviews: [],
-          suggestions: ['Priorizar correção de bugs', 'Melhorar interface do usuário']
+          suggestions: ["Priorizar correção de bugs", "Melhorar interface do usuário"]
         };
         
         await this.sendReportEmail(managerEmail, reportData);
@@ -234,13 +234,13 @@ export default apiService;
           collect: collectResult.data,
           analyze: analyzeResult.data,
           backlog: backlogResult.data,
-          message: 'Fluxo de review executado com sucesso'
+          message: "Fluxo de review executado com sucesso"
         }
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Erro no fluxo de review'
+        error: error instanceof Error ? error.message : "Erro no fluxo de review"
       };
     }
   }
