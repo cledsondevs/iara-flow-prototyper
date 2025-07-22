@@ -19,6 +19,84 @@ interface FlowTemplatesProps {
 export const FlowTemplates = ({ onLoadTemplate }: FlowTemplatesProps) => {
   const templates: FlowTemplate[] = [
     {
+      id: 'simple-review-email-flow',
+      name: 'Coleta, Análise e Email',
+      description: 'Fluxo simplificado para coletar reviews, analisar sentimento e enviar e-mail.',
+      icon: Mail,
+      nodes: [
+        {
+          id: 'input-simple-review',
+          type: 'data',
+          position: { x: 50, y: 100 },
+          data: {
+            label: 'Package Name',
+            dataType: 'input',
+            format: 'text/plain',
+            userInput: 'com.itau.investimentos'
+          }
+        },
+        {
+          id: 'review-collector-simple',
+          type: 'agent',
+          position: { x: 300, y: 100 },
+          data: {
+            label: 'Review Collector',
+            agentType: 'review_collector',
+            instructions: 'Coleta reviews de Google Play e App Store'
+          }
+        },
+        {
+          id: 'sentiment-analyzer-simple',
+          type: 'agent',
+          position: { x: 550, y: 100 },
+          data: {
+            label: 'Sentiment Analyzer',
+            agentType: 'sentiment_analyzer',
+            instructions: 'Analisa o sentimento e extrai tópicos de reviews'
+          }
+        },
+        {
+          id: 'email-sender-simple',
+          type: 'agent',
+          position: { x: 800, y: 100 },
+          data: {
+            label: 'Email Sender',
+            agentType: 'email_sender',
+            instructions: 'Envia emails para destinatários específicos',
+            toEmail: 'gerente@empresa.com',
+            subject: 'Relatório de Reviews Simplificado',
+            emailBody: 'Relatório simplificado de reviews processados.'
+          }
+        }
+      ],
+      edges: [
+        {
+          id: 'e-simple-1',
+          source: 'input-simple-review',
+          target: 'review-collector-simple',
+          type: 'smoothstep',
+          animated: false,
+          style: { strokeWidth: 2 }
+        },
+        {
+          id: 'e-simple-2',
+          source: 'review-collector-simple',
+          target: 'sentiment-analyzer-simple',
+          type: 'smoothstep',
+          animated: false,
+          style: { strokeWidth: 2 }
+        },
+        {
+          id: 'e-simple-3',
+          source: 'sentiment-analyzer-simple',
+          target: 'email-sender-simple',
+          type: 'smoothstep',
+          animated: false,
+          style: { strokeWidth: 2 }
+        }
+      ]
+    },
+    {
       id: 'review-analysis-flow',
       name: 'Análise de Reviews',
       description: 'Fluxo completo para coletar, analisar reviews e gerar backlog automaticamente',
