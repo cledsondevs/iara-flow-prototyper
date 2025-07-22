@@ -49,6 +49,8 @@ const PrototypeEditorInner = () => {
   const [showExecution, setShowExecution] = useState(false);
   const [executionSteps, setExecutionSteps] = useState<any[]>([]);
   const [finalResult, setFinalResult] = useState<string>('');
+  const [executionLogs, setExecutionLogs] = useState<string[]>([]);
+  const [executionError, setExecutionError] = useState<string>('');
   const [isExecuting, setIsExecuting] = useState(false);
   const { toast } = useToast();
   const { zoomIn, zoomOut, getZoom } = useReactFlow();
@@ -183,8 +185,11 @@ const PrototypeEditorInner = () => {
       return;
     }
 
+    // Limpar estados anteriores
     setExecutionSteps([]);
     setFinalResult('');
+    setExecutionLogs([]);
+    setExecutionError('');
     setShowExecution(true);
     setIsExecuting(true);
     
@@ -210,13 +215,19 @@ const PrototypeEditorInner = () => {
     }));
     setExecutionSteps(steps);
 
+    // Adicionar log inicial
+    setExecutionLogs(prev => [...prev, `Iniciando execução do fluxo com ${agentNodes.length} agentes`]);
+
     try {
       let result;
       
       if (hasReviewCollector) {
         // Executar fluxo de review específico
         const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
-        const managerEmail = emailSenderNode?.data.toEmail || undefined;
+        const managerEmail = emailSenderNode?.data.toEmail || "cledson199@gmail.com"; // E-mail padrão fornecido
+        
+        setExecutionLogs(prev => [...prev, `Executando fluxo de review para: ${userInput}`]);
+        setExecutionLogs(prev => [...prev, `E-mail de destino: ${managerEmail}`]);
         
         result = await apiService.executeReviewFlow(userInput as string, managerEmail);
       } else {
@@ -226,7 +237,14 @@ const PrototypeEditorInner = () => {
           edges,
           exportedAt: new Date().toISOString()
         };
+        
+        setExecutionLogs(prev => [...prev, `Executando fluxo genérico`]);
         result = await apiService.executeFlowDirect(flowData, userInput as string, mockUserId);
+      }
+
+      // Adicionar logs da resposta da API
+      if (result.logs && result.logs.length > 0) {
+        setExecutionLogs(prev => [...prev, ...result.logs]);
       }
 
       if (result.success && result.data) {
@@ -237,7 +255,8 @@ const PrototypeEditorInner = () => {
           result: result.data?.output || 'Executado com sucesso'
         })));
 
-        setFinalResult(result.data.output || 'Execução concluída');
+        setFinalResult(result.data.output || result.data.message || 'Execução concluída');
+        setExecutionLogs(prev => [...prev, 'Execução concluída com sucesso']);
         
         toast({
           title: "Execução concluída",
@@ -251,6 +270,9 @@ const PrototypeEditorInner = () => {
           error: result.error || 'Erro desconhecido'
         })));
 
+        setExecutionError(result.error || 'Erro desconhecido');
+        setExecutionLogs(prev => [...prev, `Erro: ${result.error || 'Erro desconhecido'}`]);
+
         toast({
           title: "Erro na execução",
           description: result.error || "Falha ao executar o fluxo",
@@ -258,16 +280,21 @@ const PrototypeEditorInner = () => {
         });
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      
       // Atualizar steps como erro
       setExecutionSteps(prev => prev.map(step => ({
         ...step,
         status: 'error' as const,
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
+        error: errorMessage
       })));
+
+      setExecutionError(errorMessage);
+      setExecutionLogs(prev => [...prev, `Erro inesperado: ${errorMessage}`]);
 
       toast({
         title: "Erro na execução",
-        description: error instanceof Error ? error.message : "Erro desconhecido",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -422,6 +449,8 @@ const PrototypeEditorInner = () => {
         onClose={() => setShowExecution(false)}
         steps={executionSteps}
         finalResult={finalResult}
+        logs={executionLogs}
+        error={executionError}
       />
     </div>
   );
