@@ -191,18 +191,15 @@ const PrototypeEditorInner = () => {
     // Animar edges durante execução
     setEdges(prev => prev.map(edge => ({ ...edge, animated: true })));
 
-    // Preparar dados do fluxo
-    const flowData = {
-      nodes,
-      edges,
-      exportedAt: new Date().toISOString()
-    };
-
+    // Verificar se é um fluxo de review (contém Review Collector)
+    const hasReviewCollector = agentNodes.some(node => node.data.agentType === 'review_collector');
+    const hasEmailSender = agentNodes.some(node => node.data.agentType === 'email_sender');
+    
     // Buscar nós de input para obter entrada do usuário
     const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
     const userInput = inputNodes.length > 0 && inputNodes[0].data.userInput 
       ? inputNodes[0].data.userInput 
-      : "Entrada do usuário não fornecida";
+      : "com.itau.investimentos"; // Valor padrão para testes
 
     // Mostrar steps iniciais
     const steps = agentNodes.map(node => ({
@@ -214,8 +211,23 @@ const PrototypeEditorInner = () => {
     setExecutionSteps(steps);
 
     try {
-      // Executar fluxo via API
-      const result = await apiService.executeFlowDirect(flowData, userInput as string, mockUserId);
+      let result;
+      
+      if (hasReviewCollector) {
+        // Executar fluxo de review específico
+        const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
+        const managerEmail = emailSenderNode?.data.toEmail || undefined;
+        
+        result = await apiService.executeReviewFlow(userInput as string, managerEmail);
+      } else {
+        // Executar fluxo genérico
+        const flowData = {
+          nodes,
+          edges,
+          exportedAt: new Date().toISOString()
+        };
+        result = await apiService.executeFlowDirect(flowData, userInput as string, mockUserId);
+      }
 
       if (result.success && result.data) {
         // Atualizar steps como sucesso
@@ -386,10 +398,17 @@ const PrototypeEditorInner = () => {
         </div>
       )}
 
-      {/* Guia de boas-vindas */}
-      {showWelcome && (
-        <WelcomeGuide onClose={() => setShowWelcome(false)} />
-      )}
+        {/* Guia de boas-vindas */}
+        {showWelcome && (
+          <WelcomeGuide 
+            onClose={() => setShowWelcome(false)} 
+            onLoadTemplate={(template) => {
+              setNodes(template.nodes);
+              setEdges(template.edges);
+              setShowWelcome(false);
+            }}
+          />
+        )}
 
       {/* Dialog de Configurações */}
       <ConfigDialog 

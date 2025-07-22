@@ -86,14 +86,23 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     <SelectItem value="retriever">Recuperador</SelectItem>
                     <SelectItem value="generator">Gerador</SelectItem>
                     <SelectItem value="processor">Processador</SelectItem>
+                    <SelectItem value="langchain_agent">LangChain Agent</SelectItem>
                     <SelectItem value="review_collector">Coletor de Reviews</SelectItem>
+                    <SelectItem value="sentiment_analyzer">Analisador de Sentimento</SelectItem>
+                    <SelectItem value="backlog_generator">Gerador de Backlog</SelectItem>
+                    <SelectItem value="memory_manager">Gerenciador de Memória</SelectItem>
                     <SelectItem value="email_sender">Envio de Email</SelectItem>
                     <SelectItem value="postgresql_memory">Memória PostgreSQL</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && agentData.agentType !== 'postgresql_memory' && (
+              {agentData.agentType !== 'review_collector' && 
+               agentData.agentType !== 'sentiment_analyzer' && 
+               agentData.agentType !== 'backlog_generator' && 
+               agentData.agentType !== 'memory_manager' && 
+               agentData.agentType !== 'email_sender' && 
+               agentData.agentType !== 'postgresql_memory' && (
                 <>
                   <div className="space-y-2">
                     <Label>Provedor de IA</Label>
@@ -150,7 +159,12 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 />
               </div>
 
-              {agentData.agentType !== 'review_collector' && agentData.agentType !== 'email_sender' && agentData.agentType !== 'postgresql_memory' && (
+              {agentData.agentType !== 'review_collector' && 
+               agentData.agentType !== 'sentiment_analyzer' && 
+               agentData.agentType !== 'backlog_generator' && 
+               agentData.agentType !== 'memory_manager' && 
+               agentData.agentType !== 'email_sender' && 
+               agentData.agentType !== 'postgresql_memory' && (
                 <>
                   <div className="space-y-2">
                     <Label>Temperatura: {agentData.temperature || 0.7}</Label>
@@ -180,6 +194,30 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 <div className="space-y-2">
                   <div className="text-xs text-muted-foreground">
                     O Review Collector receberá a URL da API através de uma conexão com um nó External API.
+                  </div>
+                </div>
+              )}
+
+              {agentData.agentType === 'sentiment_analyzer' && (
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground">
+                    O Sentiment Analyzer processará reviews coletados e extrairá sentimentos e tópicos principais.
+                  </div>
+                </div>
+              )}
+
+              {agentData.agentType === 'backlog_generator' && (
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground">
+                    O Backlog Generator criará itens de backlog baseados na análise de reviews negativos.
+                  </div>
+                </div>
+              )}
+
+              {agentData.agentType === 'memory_manager' && (
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground">
+                    O Memory Manager gerenciará a memória de longo prazo do agente, armazenando contexto e aprendizados.
                   </div>
                 </div>
               )}

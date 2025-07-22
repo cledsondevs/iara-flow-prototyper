@@ -1,5 +1,5 @@
 // Configuração da API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://200.98.64.133/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export interface FlowData {
   nodes: any[];
   edges: any[];
@@ -162,4 +162,86 @@ class ApiService {
 export const apiService = new ApiService();
 export default apiService;
 
+
+
+  // Métodos específicos para Review Agent
+  async collectReviews(packageName: string): Promise<ApiResponse<any>> {
+    return this.request(`/review-agent/apps/${packageName}/collect`, {
+      method: 'POST',
+    });
+  }
+
+  async analyzeReviews(packageName: string): Promise<ApiResponse<any>> {
+    return this.request(`/review-agent/apps/${packageName}/analyze`, {
+      method: 'POST',
+    });
+  }
+
+  async generateBacklog(packageName: string, days: number = 7): Promise<ApiResponse<any>> {
+    return this.request(`/review-agent/apps/${packageName}/backlog`, {
+      method: 'POST',
+      body: JSON.stringify({ days }),
+    });
+  }
+
+  async sendReportEmail(recipientEmail: string, reportData: any): Promise<ApiResponse<any>> {
+    return this.request('/review-agent/send-report-email', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipient_email: recipientEmail,
+        report_data: reportData,
+      }),
+    });
+  }
+
+  // Método para executar fluxo de review completo
+  async executeReviewFlow(packageName: string, managerEmail?: string): Promise<ApiResponse<any>> {
+    try {
+      // 1. Coletar reviews
+      const collectResult = await this.collectReviews(packageName);
+      if (!collectResult.success) {
+        return collectResult;
+      }
+
+      // 2. Analisar sentimento
+      const analyzeResult = await this.analyzeReviews(packageName);
+      if (!analyzeResult.success) {
+        return analyzeResult;
+      }
+
+      // 3. Gerar backlog
+      const backlogResult = await this.generateBacklog(packageName);
+      if (!backlogResult.success) {
+        return backlogResult;
+      }
+
+      // 4. Enviar e-mail se houver reviews negativos e e-mail fornecido
+      if (managerEmail && backlogResult.data?.summary?.status_summary?.negative?.count > 0) {
+        const reportData = {
+          package_name: packageName,
+          negative_reviews_count: backlogResult.data.summary.status_summary.negative.count,
+          main_themes: ['usabilidade', 'performance'], // Exemplo
+          critical_reviews: [],
+          suggestions: ['Priorizar correção de bugs', 'Melhorar interface do usuário']
+        };
+        
+        await this.sendReportEmail(managerEmail, reportData);
+      }
+
+      return {
+        success: true,
+        data: {
+          collect: collectResult.data,
+          analyze: analyzeResult.data,
+          backlog: backlogResult.data,
+          message: 'Fluxo de review executado com sucesso'
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Erro no fluxo de review'
+      };
+    }
+  }
 
