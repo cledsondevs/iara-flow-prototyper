@@ -1,13 +1,48 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Lightbulb, Smartphone, Plus, MousePointer } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { X, Sparkles, Zap, FileText, Mail, Lightbulb, Plus, MousePointer, Smartphone } from 'lucide-react';
+import { FlowTemplates } from '../FlowTemplates';
 
 interface WelcomeGuideProps {
   onClose: () => void;
+  onLoadTemplate?: (template: any) => void;
 }
 
-export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
+export const WelcomeGuide = ({ onClose, onLoadTemplate }: WelcomeGuideProps) => {
+  const [showTemplates, setShowTemplates] = useState(false);
+
+  const handleLoadTemplate = (template: any) => {
+    if (onLoadTemplate) {
+      onLoadTemplate(template);
+    }
+    onClose();
+  };
+
+  if (showTemplates) {
+    return (
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <CardHeader className="border-b border-border">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl">Templates de Fluxo</CardTitle>
+                <CardDescription>Escolha um template para começar</CardDescription>
+              </div>
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <FlowTemplates onLoadTemplate={handleLoadTemplate} />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <Card className="max-w-md w-full shadow-xl border-primary/20">
@@ -72,12 +107,20 @@ export const WelcomeGuide = ({ onClose }: WelcomeGuideProps) => {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-border">
+          <div className="pt-2 border-t border-border space-y-2">
+            <Button 
+              onClick={() => setShowTemplates(true)}
+              variant="outline"
+              className="w-full"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Ver Templates de Fluxo
+            </Button>
             <Button 
               onClick={onClose}
               className="w-full bg-primary hover:bg-primary-hover"
             >
-              Começar a criar agentes
+              Começar do Zero
             </Button>
           </div>
         </CardContent>
