@@ -68,8 +68,8 @@ export const Dashboard = () => {
       setLoading(true);
       const response = await apiService.getDashboard(url);
       
-      if (response.success && response.dashboard) {
-        setDashboard(response.dashboard);
+      if (response.success && response.data) {
+        setDashboard(response.data);
       } else {
         setError(response.error || 'Dashboard não encontrado');
       }
