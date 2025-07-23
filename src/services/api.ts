@@ -1,5 +1,7 @@
 // Configuração da API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://200.98.64.133/api';
+const getApiBaseUrl = () => {
+  return localStorage.getItem('backend_url') || import.meta.env.VITE_API_URL || 'http://200.98.64.133/api';
+};
 
 export interface FlowData {
   nodes: any[];
@@ -33,12 +35,14 @@ export interface ExecutionResult {
   output?: string; // A saída principal do agente
   message?: string; // Mensagem de sucesso do agente
   error?: string;
+  logs?: string[]; // Logs detalhados do processamento
 }
 
 export interface ApiResponse<T> {
   success: boolean;
   error?: string;
   data?: T;
+  logs?: string[]; // Logs detalhados da resposta
 }
 
 class ApiService {
@@ -47,12 +51,29 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const url = `${API_BASE_URL}${endpoint}`;
+      const url = `${getApiBaseUrl()}${endpoint}`;
+      
+      // Adicionar configurações do localStorage aos headers se necessário
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...options.headers as Record<string, string>,
+      };
+
+      // Adicionar configurações de API keys e e-mail se o endpoint precisar
+      if (endpoint.includes('/flow/execute') || endpoint.includes('/review-agent/')) {
+        const openaiKey = localStorage.getItem('openai_api_key');
+        const geminiKey = localStorage.getItem('gemini_api_key');
+        const emailGmail = localStorage.getItem('email_gmail');
+        const emailAppPassword = localStorage.getItem('email_app_password');
+
+        if (openaiKey) headers['X-OpenAI-Key'] = openaiKey;
+        if (geminiKey) headers['X-Gemini-Key'] = geminiKey;
+        if (emailGmail) headers['X-Email-Gmail'] = emailGmail;
+        if (emailAppPassword) headers['X-Email-App-Password'] = emailAppPassword;
+      }
+      
       const response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
         ...options,
       });
       
@@ -62,17 +83,20 @@ class ApiService {
         return {
           success: false,
           error: data.error || `HTTP ${response.status}: ${response.statusText}`,
+          logs: data.logs || [],
         };
       }
       
       return {
         success: true,
         data,
+        logs: data.logs || [],
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro desconhecido',
+        logs: [`Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`],
       };
     }
   }
@@ -213,26 +237,40 @@ class ApiService {
   // Método para executar fluxo de review completo
   async executeReviewFlow(packageName: string, managerEmail?: string): Promise<ApiResponse<any>> {
     try {
+      const logs: string[] = [];
+      
+      logs.push(`Iniciando fluxo de review para o pacote: ${packageName}`);
+      
       // 1. Coletar reviews
+      logs.push('Coletando reviews...');
       const collectResult = await this.collectReviews(packageName);
       if (!collectResult.success) {
-        return collectResult;
+        logs.push(`Erro ao coletar reviews: ${collectResult.error}`);
+        return { ...collectResult, logs };
       }
+      logs.push(`Reviews coletados com sucesso: ${collectResult.data?.reviews_count || 0} reviews`);
 
       // 2. Analisar sentimento
+      logs.push('Analisando sentimento dos reviews...');
       const analyzeResult = await this.analyzeReviews(packageName);
       if (!analyzeResult.success) {
-        return analyzeResult;
+        logs.push(`Erro ao analisar reviews: ${analyzeResult.error}`);
+        return { ...analyzeResult, logs };
       }
+      logs.push('Análise de sentimento concluída');
 
       // 3. Gerar backlog
+      logs.push('Gerando backlog de melhorias...');
       const backlogResult = await this.generateBacklog(packageName);
       if (!backlogResult.success) {
-        return backlogResult;
+        logs.push(`Erro ao gerar backlog: ${backlogResult.error}`);
+        return { ...backlogResult, logs };
       }
+      logs.push('Backlog gerado com sucesso');
 
       // 4. Enviar e-mail se houver reviews negativos e e-mail fornecido
       if (managerEmail && backlogResult.data?.summary?.status_summary?.negative?.count > 0) {
+        logs.push(`Enviando relatório por e-mail para: ${managerEmail}`);
         const reportData = {
           package_name: packageName,
           negative_reviews_count: backlogResult.data.summary.status_summary.negative.count,
@@ -241,8 +279,19 @@ class ApiService {
           suggestions: ["Priorizar correção de bugs", "Melhorar interface do usuário"]
         };
         
-        await this.sendReportEmail(managerEmail, reportData);
+        const emailResult = await this.sendReportEmail(managerEmail, reportData);
+        if (emailResult.success) {
+          logs.push('E-mail enviado com sucesso');
+        } else {
+          logs.push(`Erro ao enviar e-mail: ${emailResult.error}`);
+        }
+      } else if (managerEmail) {
+        logs.push('Nenhum review negativo encontrado, e-mail não enviado');
+      } else {
+        logs.push('E-mail do destinatário não fornecido');
       }
+
+      logs.push('Fluxo de review concluído com sucesso');
 
       return {
         success: true,
@@ -251,12 +300,15 @@ class ApiService {
           analyze: analyzeResult.data,
           backlog: backlogResult.data,
           message: "Fluxo de review executado com sucesso"
-        }
+        },
+        logs
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro no fluxo de review";
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Erro no fluxo de review"
+        error: errorMessage,
+        logs: [`Erro inesperado: ${errorMessage}`]
       };
     }
   }
@@ -264,3 +316,4 @@ class ApiService {
 
 export const apiService = new ApiService();
 export default apiService;
+
