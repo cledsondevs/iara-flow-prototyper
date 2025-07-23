@@ -312,6 +312,23 @@ class ApiService {
       };
     }
   }
+
+  // Método para obter dashboard
+  async getDashboard(customUrl: string): Promise<ApiResponse<any>> {
+    const response = await this.request(`/dashboard/${customUrl}`, {
+      method: 'GET'
+    });
+    
+    // Ajustar resposta para compatibilidade com o componente Dashboard
+    if (response.success && response.data) {
+      return {
+        success: true,
+        dashboard: response.data
+      };
+    }
+    
+    return response;
+  }
 }
 
 export const apiService = new ApiService();

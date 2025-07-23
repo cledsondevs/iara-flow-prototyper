@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { X, CheckCircle, AlertCircle, Clock, Copy, FileText } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Clock, Copy, FileText, ExternalLink, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ExecutionStep {
@@ -15,6 +15,15 @@ interface ExecutionStep {
   error?: string;
 }
 
+interface DashboardInfo {
+  dashboard_id?: string;
+  custom_url?: string;
+  full_url?: string;
+  title?: string;
+  expires_at?: string;
+  error?: string;
+}
+
 interface ExecutionResultProps {
   open: boolean;
   onClose: () => void;
@@ -22,9 +31,10 @@ interface ExecutionResultProps {
   finalResult?: string;
   logs?: string[];
   error?: string;
+  dashboard?: DashboardInfo;
 }
 
-export const ExecutionResult = ({ open, onClose, steps, finalResult, logs = [], error }: ExecutionResultProps) => {
+export const ExecutionResult = ({ open, onClose, steps, finalResult, logs = [], error, dashboard }: ExecutionResultProps) => {
   const { toast } = useToast();
 
   const copyToClipboard = (text: string) => {
@@ -33,6 +43,10 @@ export const ExecutionResult = ({ open, onClose, steps, finalResult, logs = [], 
       title: "Copiado!",
       description: "Conteúdo copiado para a área de transferência.",
     });
+  };
+
+  const openDashboard = (url: string) => {
+    window.open(url, '_blank');
   };
 
   if (!open) return null;
@@ -126,6 +140,61 @@ export const ExecutionResult = ({ open, onClose, steps, finalResult, logs = [], 
             </TabsContent>
 
             <TabsContent value="result" className="flex-1 space-y-4">
+              {/* Dashboard Section */}
+              {dashboard && !dashboard.error && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-sm flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4" />
+                      Dashboard Gerencial
+                    </h4>
+                  </div>
+                  <Card className="border-green-200 bg-green-50">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h5 className="font-medium text-sm text-green-800">
+                            {dashboard.title || 'Dashboard de Backlog'}
+                          </h5>
+                          <p className="text-xs text-green-600 mt-1">
+                            Dashboard interativo com análises e métricas do backlog gerado
+                          </p>
+                          {dashboard.expires_at && (
+                            <p className="text-xs text-green-600 mt-1">
+                              Expira em: {new Date(dashboard.expires_at).toLocaleDateString('pt-BR')}
+                            </p>
+                          )}
+                        </div>
+                        <Button 
+                          size="sm"
+                          onClick={() => openDashboard(`/dashboard/${dashboard.custom_url}`)}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Abrir Dashboard
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {dashboard?.error && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm text-orange-600 flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4" />
+                    Dashboard (Erro)
+                  </h4>
+                  <Card className="border-orange-200 bg-orange-50">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-orange-700">
+                        Erro ao gerar dashboard: {dashboard.error}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
               {error && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -164,7 +233,7 @@ export const ExecutionResult = ({ open, onClose, steps, finalResult, logs = [], 
                 </div>
               )}
 
-              {!finalResult && !error && (
+              {!finalResult && !error && !dashboard && (
                 <div className="text-sm text-muted-foreground text-center py-8">
                   <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   Aguardando resultado da execução...
