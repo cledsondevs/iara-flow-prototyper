@@ -61,7 +61,7 @@ const agents = [
     popular: true
   },
   {
-    icon: Database,
+    icon: Brain,
     name: "Sentiment Analyzer",
     description: "Analisa sentimento e tópicos de reviews",
     details: "Análise avançada de sentimentos e extração de insights comportamentais",
@@ -76,7 +76,7 @@ const agents = [
     popular: true
   },
   {
-    icon: Brain,
+    icon: Database,
     name: "Memory Manager",
     description: "Gerencia a memória de longo prazo do agente",
     details: "Sistema avançado de memória persistente para contextos complexos",
@@ -93,77 +93,63 @@ const agents = [
 
 export const AgentsSection = () => {
   return (
-    <section id="agentes" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-            Nossos <span className="bg-gradient-primary bg-clip-text text-transparent">Agentes de IA</span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Cada agente possui funcionalidades específicas, desde processamento de linguagem natural 
-            até análise de dados e integração com APIs externas.
+    <section id="agentes" className="section-padding particles-bg">
+      <div className="container-modern">
+        <div className="text-center space-y-6 mb-16">
+          <h2 className="section-title">Nossos Agentes de IA</h2>
+          <p className="text-responsive-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Cada agente possui funcionalidades específicas, desde processamento de linguagem natural até análise de dados e integração com APIs externas.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid-modern">
           {agents.map((agent, index) => {
             const IconComponent = agent.icon;
             return (
-              <Card 
-                key={index} 
-                className="group hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 border-border/50 hover:border-primary/30"
-              >
-                <CardHeader className="space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:shadow-glow transition-all duration-300">
-                      <IconComponent className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    {agent.popular && (
-                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                        Popular
-                      </Badge>
-                    )}
+              <div key={agent.name} className="feature-card group">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 btn-modern rounded-2xl flex items-center justify-center shadow-modern group-hover:pulse-glow transition-all duration-300">
+                    <IconComponent className="w-8 h-8 text-primary-foreground" />
                   </div>
-                  
-                  <div>
-                    <CardTitle className="text-xl text-foreground group-hover:text-primary transition-colors">
-                      {agent.name}
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground">
-                      {agent.description}
-                    </CardDescription>
-                  </div>
-                </CardHeader>
+                  {agent.popular && (
+                    <Badge className="bg-gradient-primary text-primary-foreground font-semibold px-3 py-1 shadow-modern">
+                      Popular
+                    </Badge>
+                  )}
+                </div>
 
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-foreground/80">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">{agent.name}</h3>
+                    <p className="text-muted-foreground font-medium">{agent.description}</p>
+                  </div>
+
+                  <p className="text-sm text-foreground/70 leading-relaxed">
                     {agent.details}
                   </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
+
+                  <div className="flex items-center justify-between pt-4">
+                    <Badge variant="outline" className="font-medium">
                       {agent.category}
                     </Badge>
                     <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                      size="sm" 
+                      className="btn-modern text-sm font-semibold focus-modern"
                     >
                       Usar Agente
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <Button 
-            size="lg"
-            className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+            size="lg" 
+            className="btn-modern text-lg px-10 py-4 h-auto font-semibold focus-modern"
           >
-            <Workflow className="w-5 h-5 mr-2" />
             Criar Meu Primeiro Fluxo
           </Button>
         </div>
@@ -171,3 +157,4 @@ export const AgentsSection = () => {
     </section>
   );
 };
+

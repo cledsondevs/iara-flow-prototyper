@@ -8,40 +8,38 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Iara Hub Brand Colors */
+    /* New, more vibrant color palette */
     --background: 0 0% 100%;
-    --foreground: 0 0% 6.7%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 6.7%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 6.7%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Primary: Iara Hub Red */
-    --primary: 353 75% 50%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 353 75% 45%;
-    --primary-light: 353 75% 95%;
+    --primary: 262 83% 58%; /* A vibrant purple */
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 262 83% 50%;
+    --primary-light: 262 83% 95%;
 
-    /* Secondary: Light grays */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 6.7%;
+    --secondary: 240 4% 96%;
+    --secondary-foreground: 240 5% 64.9%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 240 4% 96%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 353 75% 96%;
-    --accent-foreground: 353 75% 50%;
+    --accent: 262 83% 95%;
+    --accent-foreground: 262 83% 58%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 96%;
-    --ring: 353 75% 50%;
+    --border: 240 5% 90%;
+    --input: 240 5% 90%;
+    --ring: 262 83% 58%;
 
-    /* Editor specific colors */
+    /* Editor specific colors (keeping original for now) */
     --editor-background: 0 0% 98%;
     --editor-grid: 0 0% 93%;
     --node-background: 0 0% 100%;
@@ -50,15 +48,15 @@ All colors MUST be HSL.
     --connection-line: 353 75% 60%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(353 75% 50%), hsl(353 75% 45%));
-    --gradient-accent: linear-gradient(135deg, hsl(353 75% 96%), hsl(0 0% 100%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 100% 70%));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(290 83% 65%)); /* Purple to Magenta */
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--background)));
+    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%), hsl(290 83% 65%)); /* Matching hero gradient */
 
     /* Shadows */
     --shadow-node: 0 4px 12px hsl(0 0% 0% / 0.1);
     --shadow-floating: 0 8px 24px hsl(0 0% 0% / 0.15);
-    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.4);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
 
     --radius: 0.5rem;
 
@@ -80,36 +78,36 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with Iara Hub accent */
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    /* Dark mode with new accent */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 95%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 353 75% 55%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 353 75% 50%;
-    --primary-light: 353 75% 15%;
+    --primary: 262 83% 65%;
+    --primary-foreground: 240 10% 3.9%;
+    --primary-hover: 262 83% 70%;
+    --primary-light: 262 83% 15%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 240 4% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 240 4% 15%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 353 75% 15%;
-    --accent-foreground: 353 75% 55%;
+    --accent: 262 83% 15%;
+    --accent-foreground: 262 83% 65%;
 
     --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 353 75% 55%;
+    --border: 240 4% 20%;
+    --input: 240 4% 15%;
+    --ring: 262 83% 65%;
 
     --editor-background: 0 0% 8%;
     --editor-grid: 0 0% 12%;
@@ -192,3 +190,243 @@ All colors MUST be HSL.
     @apply bg-transparent border-none hover:bg-[hsl(var(--accent))];
   }
 }
+
+/* Landing Page Professional Styles */
+@layer components {
+  /* Modern glassmorphism effect */
+  .glass-card {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl;
+  }
+
+  /* Animated gradient backgrounds */
+  .gradient-bg {
+    background: linear-gradient(-45deg, hsl(var(--primary)), hsl(290 83% 65%), hsl(220 83% 65%), hsl(var(--primary)));
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Floating animation for elements */
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* Pulse glow effect */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseGlow {
+    from { box-shadow: 0 0 20px hsl(var(--primary) / 0.4); }
+    to { box-shadow: 0 0 40px hsl(var(--primary) / 0.8); }
+  }
+
+  /* Modern button styles */
+  .btn-modern {
+    @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(290 83% 65%));
+    box-shadow: 0 10px 30px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-modern:hover {
+    box-shadow: 0 15px 40px hsl(var(--primary) / 0.5);
+  }
+
+  .btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-modern:hover::before {
+    left: 100%;
+  }
+
+  /* Enhanced card styles */
+  .feature-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-8 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px hsl(var(--primary) / 0.15);
+  }
+
+  /* Typography enhancements */
+  .hero-title {
+    @apply text-6xl md:text-7xl lg:text-8xl font-black leading-none;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(290 83% 65%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold mb-6;
+    background: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Modern spacing and layout */
+  .section-padding {
+    @apply py-20 md:py-32;
+  }
+
+  .container-modern {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Animated underlines */
+  .animated-underline {
+    @apply relative;
+  }
+
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(290 83% 65%));
+    transition: width 0.3s ease;
+  }
+
+  .animated-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Particle background effect */
+  .particles-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .particles-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 80%, hsl(var(--primary) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(290 83% 65% / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsl(220 83% 65% / 0.1) 0%, transparent 50%);
+    animation: particleFloat 20s ease-in-out infinite;
+  }
+
+  @keyframes particleFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-30px) rotate(120deg); }
+    66% { transform: translateY(30px) rotate(240deg); }
+  }
+
+  /* Enhanced shadows */
+  .shadow-modern {
+    box-shadow: 
+      0 4px 6px -1px hsl(var(--primary) / 0.1),
+      0 2px 4px -1px hsl(var(--primary) / 0.06),
+      0 0 0 1px hsl(var(--primary) / 0.05);
+  }
+
+  .shadow-modern-lg {
+    box-shadow: 
+      0 20px 25px -5px hsl(var(--primary) / 0.1),
+      0 10px 10px -5px hsl(var(--primary) / 0.04),
+      0 0 0 1px hsl(var(--primary) / 0.05);
+  }
+
+  /* Responsive text sizes */
+  .text-responsive-xl {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  .text-responsive-lg {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  /* Modern grid layouts */
+  .grid-modern {
+    @apply grid gap-8 md:gap-12;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced focus states */
+  .focus-modern:focus {
+    @apply outline-none ring-4 ring-primary/20 ring-offset-2;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .feature-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .hero-title {
+    @apply text-4xl md:text-5xl;
+  }
+  
+  .section-padding {
+    @apply py-12 md:py-16;
+  }
+  
+  .feature-card {
+    @apply p-6;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-modern {
+    @apply border-2 border-primary;
+  }
+  
+  .feature-card {
+    @apply border-2 border-primary/20;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .float-animation,
+  .pulse-glow,
+  .gradient-bg,
+  .particles-bg::before {
+    animation: none;
+  }
+  
+  .btn-modern,
+  .feature-card {
+    transition: none;
+  }
+}
+
