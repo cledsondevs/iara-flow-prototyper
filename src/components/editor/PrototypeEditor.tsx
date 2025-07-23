@@ -51,6 +51,7 @@ const PrototypeEditorInner = () => {
   const [finalResult, setFinalResult] = useState<string>('');
   const [executionLogs, setExecutionLogs] = useState<string[]>([]);
   const [executionError, setExecutionError] = useState<string>('');
+  const [dashboardInfo, setDashboardInfo] = useState<any>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const { toast } = useToast();
   const { zoomIn, zoomOut, getZoom } = useReactFlow();
@@ -258,6 +259,12 @@ const PrototypeEditorInner = () => {
         setFinalResult(result.data.output || result.data.message || 'Execução concluída');
         setExecutionLogs(prev => [...prev, 'Execução concluída com sucesso']);
         
+        // Capturar informações do dashboard se disponível
+        if (result.data.dashboard) {
+          setDashboardInfo(result.data.dashboard);
+          setExecutionLogs(prev => [...prev, `Dashboard criado: ${result.data.dashboard.title || 'Dashboard de Backlog'}`]);
+        }
+        
         toast({
           title: "Execução concluída",
           description: "Fluxo de IA executado com sucesso!"
@@ -451,6 +458,7 @@ const PrototypeEditorInner = () => {
         finalResult={finalResult}
         logs={executionLogs}
         error={executionError}
+        dashboard={dashboardInfo}
       />
     </div>
   );
