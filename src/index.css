@@ -8,54 +8,40 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Iara Hub Brand Colors */
     --background: 0 0% 100%;
-    --foreground: 0 0% 6.7%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 6.7%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 6.7%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Primary: Iara Hub Red */
-    --primary: 353 75% 50%;
+    --primary: 0 85% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 353 75% 45%;
-    --primary-light: 353 75% 95%;
+    --primary-glow: 0 100% 70%;
 
-    /* Secondary: Light grays */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 6.7%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 353 75% 96%;
-    --accent-foreground: 353 75% 50%;
+    --accent: 0 85% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 96%;
-    --ring: 353 75% 50%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 0 85% 60%;
 
-    /* Editor specific colors */
-    --editor-background: 0 0% 98%;
-    --editor-grid: 0 0% 93%;
-    --node-background: 0 0% 100%;
-    --node-border: 0 0% 85%;
-    --node-active: 353 75% 50%;
-    --connection-line: 353 75% 60%;
-
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(353 75% 50%), hsl(353 75% 45%));
-    --gradient-accent: linear-gradient(135deg, hsl(353 75% 96%), hsl(0 0% 100%));
-
-    /* Shadows */
-    --shadow-node: 0 4px 12px hsl(0 0% 0% / 0.1);
-    --shadow-floating: 0 8px 24px hsl(0 0% 0% / 0.15);
+    /* Custom gradient and shadow tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 100% 70%));
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
 
     --radius: 0.5rem;
 
@@ -77,43 +63,33 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with Iara Hub accent */
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 95%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 353 75% 55%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 353 75% 50%;
-    --primary-light: 353 75% 15%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 353 75% 15%;
-    --accent-foreground: 353 75% 55%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 353 75% 55%;
-
-    --editor-background: 0 0% 8%;
-    --editor-grid: 0 0% 12%;
-    --node-background: 0 0% 11%;
-    --node-border: 0 0% 20%;
-    --node-active: 353 75% 55%;
-    --connection-line: 353 75% 60%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -132,60 +108,5 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-
-  .font-mono {
-    font-family: 'Roboto Mono', 'Consolas', 'Monaco', monospace;
-  }
-
-  /* Editor specific styles */
-  .editor-surface {
-    @apply bg-[hsl(var(--editor-background))];
-  }
-
-  .node-component {
-    @apply bg-[hsl(var(--node-background))] border-[hsl(var(--node-border))] shadow-[var(--shadow-node)];
-  }
-
-  .node-active {
-    @apply border-[hsl(var(--node-active))] shadow-[var(--shadow-floating)];
-  }
-
-  /* React Flow customizations */
-  .react-flow__node {
-    @apply node-component rounded-lg;
-  }
-
-  .react-flow__node.selected {
-    @apply node-active;
-  }
-
-  .react-flow__edge-path {
-    stroke: hsl(var(--connection-line));
-    stroke-width: 2;
-  }
-
-  .react-flow__edge.selected .react-flow__edge-path {
-    stroke: hsl(var(--node-active));
-    stroke-width: 3;
-  }
-
-  .react-flow__handle {
-    @apply bg-[hsl(var(--node-active))] border-2 border-[hsl(var(--node-background))];
-    width: 10px;
-    height: 10px;
-  }
-
-  .react-flow__minimap {
-    @apply bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg;
-  }
-
-  .react-flow__controls {
-    @apply bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg;
-  }
-
-  .react-flow__controls button {
-    @apply bg-transparent border-none hover:bg-[hsl(var(--accent))];
   }
 }
