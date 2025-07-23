@@ -13,45 +13,38 @@ export const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10 backdrop-blur-xl">
-      <div className="container-modern flex justify-between items-center py-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 btn-modern rounded-xl flex items-center justify-center shadow-modern">
-            <span className="text-primary-foreground font-black text-xl">I</span>
+    <header className="w-full py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-lg">I</span>
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground">Iara Hub</h1>
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Visual Prototyping</p>
+            <h1 className="text-xl font-bold text-foreground">Iara Hub</h1>
+            <p className="text-xs text-muted-foreground">Visual Prototyping</p>
           </div>
         </div>
         
-        <nav className="hidden md:flex items-center space-x-10">
-          <a href="#agentes" className="text-foreground hover:text-primary transition-all duration-300 font-medium animated-underline">
+        <nav className="hidden md:flex items-center space-x-8">
+          <a href="#agentes" className="text-foreground hover:text-primary transition-colors">
             Agentes
           </a>
-          <a href="#recursos" className="text-foreground hover:text-primary transition-all duration-300 font-medium animated-underline">
+          <a href="#recursos" className="text-foreground hover:text-primary transition-colors">
             Recursos
           </a>
-          <a href="#precos" className="text-foreground hover:text-primary transition-all duration-300 font-medium animated-underline">
+          <a href="#precos" className="text-foreground hover:text-primary transition-colors">
             Preços
           </a>
-          <a href="#contato" className="text-foreground hover:text-primary transition-all duration-300 font-medium animated-underline">
+          <a href="#contato" className="text-foreground hover:text-primary transition-colors">
             Contato
           </a>
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Button 
-            variant="outline" 
-            className="hidden sm:flex border-2 hover:bg-primary/5 focus-modern font-semibold transition-all duration-300" 
-            onClick={handleLogin}
-          >
+          <Button variant="outline" className="hidden sm:flex" onClick={handleLogin}>
             Login
           </Button>
-          <Button 
-            className="btn-modern font-semibold focus-modern" 
-            onClick={handleGetStarted}
-          >
+          <Button className="bg-gradient-primary hover:shadow-glow transition-all duration-300" onClick={handleGetStarted}>
             Começar Agora
           </Button>
         </div>

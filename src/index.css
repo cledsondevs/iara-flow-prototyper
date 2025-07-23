@@ -8,36 +8,38 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* New, more vibrant color palette */
+    /* Iara Hub Brand Colors */
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 0 0% 6.7%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 6.7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 6.7%;
 
-    --primary: 262 83% 58%; /* A vibrant purple */
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 262 83% 50%;
-    --primary-light: 262 83% 95%;
+    /* Primary: Iara Hub Red */
+    --primary: 353 75% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 353 75% 45%;
+    --primary-light: 353 75% 95%;
 
-    --secondary: 240 4% 96%;
-    --secondary-foreground: 240 5% 64.9%;
+    /* Secondary: Light grays */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 6.7%;
 
-    --muted: 240 4% 96%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 262 83% 95%;
-    --accent-foreground: 262 83% 58%;
+    --accent: 353 75% 96%;
+    --accent-foreground: 353 75% 50%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5% 90%;
-    --input: 240 5% 90%;
-    --ring: 262 83% 58%;
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --ring: 353 75% 50%;
 
     /* Editor specific colors (keeping original for now) */
     --editor-background: 0 0% 98%;
@@ -48,15 +50,15 @@ All colors MUST be HSL.
     --connection-line: 353 75% 60%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(290 83% 65%)); /* Purple to Magenta */
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--background)));
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%), hsl(290 83% 65%)); /* Matching hero gradient */
+    --gradient-primary: linear-gradient(135deg, hsl(353 75% 50%), hsl(353 75% 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(353 75% 96%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 100% 70%));
 
     /* Shadows */
     --shadow-node: 0 4px 12px hsl(0 0% 0% / 0.1);
     --shadow-floating: 0 8px 24px hsl(0 0% 0% / 0.15);
-    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.4);
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
 
     --radius: 0.5rem;
 
@@ -78,36 +80,36 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with new accent */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Dark mode with Iara Hub accent */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 262 83% 65%;
-    --primary-foreground: 240 10% 3.9%;
-    --primary-hover: 262 83% 70%;
-    --primary-light: 262 83% 15%;
+    --primary: 353 75% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 353 75% 50%;
+    --primary-light: 353 75% 15%;
 
-    --secondary: 240 4% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 240 4% 15%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 262 83% 15%;
-    --accent-foreground: 262 83% 65%;
+    --accent: 353 75% 15%;
+    --accent-foreground: 353 75% 55%;
 
     --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 20%;
-    --input: 240 4% 15%;
-    --ring: 262 83% 65%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 353 75% 55%;
 
     --editor-background: 0 0% 8%;
     --editor-grid: 0 0% 12%;

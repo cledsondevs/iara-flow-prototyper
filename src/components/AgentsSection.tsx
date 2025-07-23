@@ -93,63 +93,42 @@ const agents = [
 
 export const AgentsSection = () => {
   return (
-    <section id="agentes" className="section-padding particles-bg">
-      <div className="container-modern">
-        <div className="text-center space-y-6 mb-16">
-          <h2 className="section-title">Nossos Agentes de IA</h2>
-          <p className="text-responsive-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+    <section id="agentes" className="py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-foreground mb-4">Nossos Agentes de IA</h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Cada agente possui funcionalidades específicas, desde processamento de linguagem natural até análise de dados e integração com APIs externas.
           </p>
         </div>
 
-        <div className="grid-modern">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {agents.map((agent, index) => {
             const IconComponent = agent.icon;
             return (
-              <div key={agent.name} className="feature-card group">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-16 h-16 btn-modern rounded-2xl flex items-center justify-center shadow-modern group-hover:pulse-glow transition-all duration-300">
-                    <IconComponent className="w-8 h-8 text-primary-foreground" />
-                  </div>
-                  {agent.popular && (
-                    <Badge className="bg-gradient-primary text-primary-foreground font-semibold px-3 py-1 shadow-modern">
-                      Popular
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">{agent.name}</h3>
-                    <p className="text-muted-foreground font-medium">{agent.description}</p>
-                  </div>
-
-                  <p className="text-sm text-foreground/70 leading-relaxed">
+              <Card key={agent.name} className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-lg font-medium">
+                    {agent.name}
+                  </CardTitle>
+                  <IconComponent className="h-6 w-6 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{agent.description}</div>
+                  <p className="text-xs text-muted-foreground">
                     {agent.details}
                   </p>
-
-                  <div className="flex items-center justify-between pt-4">
-                    <Badge variant="outline" className="font-medium">
-                      {agent.category}
-                    </Badge>
-                    <Button 
-                      size="sm" 
-                      className="btn-modern text-sm font-semibold focus-modern"
-                    >
-                      Usar Agente
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                  {agent.popular && (
+                    <Badge variant="secondary" className="mt-2">Popular</Badge>
+                  )}
+                </CardContent>
+              </Card>
             );
           })}
         </div>
 
-        <div className="text-center mt-16">
-          <Button 
-            size="lg" 
-            className="btn-modern text-lg px-10 py-4 h-auto font-semibold focus-modern"
-          >
+        <div className="text-center mt-12">
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
             Criar Meu Primeiro Fluxo
           </Button>
         </div>
