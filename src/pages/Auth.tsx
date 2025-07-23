@@ -13,7 +13,7 @@ const Auth: React.FC = () => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/prototyper" replace />;
   }
 
   return (

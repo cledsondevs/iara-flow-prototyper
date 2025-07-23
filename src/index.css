@@ -52,10 +52,13 @@ All colors MUST be HSL.
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(353 75% 50%), hsl(353 75% 45%));
     --gradient-accent: linear-gradient(135deg, hsl(353 75% 96%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 100% 70%));
 
     /* Shadows */
     --shadow-node: 0 4px 12px hsl(0 0% 0% / 0.1);
     --shadow-floating: 0 8px 24px hsl(0 0% 0% / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
 
     --radius: 0.5rem;
 
