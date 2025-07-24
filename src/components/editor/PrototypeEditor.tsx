@@ -28,13 +28,6 @@ import { useToast } from '@/hooks/use-toast';
 import { apiService } from '@/services/api';
 
 
-// Tipos de nós disponíveis
-const nodeTypes = {
-  agent: AgentNode,
-  data: DataNode,
-  logic: LogicNode,
-};
-
 // Configuração inicial de nós e conexões - board vazio
 const initialNodes: Node[] = [];
 
@@ -57,6 +50,13 @@ const PrototypeEditorInner = () => {
   const { zoomIn, zoomOut, getZoom } = useReactFlow();
   const [zoomLevel, setZoomLevel] = useState(0.8);
   const mockUserId = "mock_user_id"; // Usuário mock fixo
+
+  // Tipos de nós disponíveis - definido dentro do componente para acessar isExecuting
+  const nodeTypes = {
+    agent: (props: any) => <AgentNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
+    data: (props: any) => <DataNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
+    logic: (props: any) => <LogicNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
+  };
 
   // Conectar nós
   const onConnect = useCallback(

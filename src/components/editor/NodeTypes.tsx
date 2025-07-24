@@ -48,7 +48,11 @@ export interface LogicNodeData extends Record<string, unknown> {
 }
 
 // Componente Nó de Agente de IA
-export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) => {
+export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & { 
+  data: AgentNodeData; 
+  isExecuting?: boolean; 
+  isActive?: boolean; 
+}) => {
   const getIcon = () => {
     switch (data.agentType) {
       case 'chatbot': return MessageSquare;
@@ -87,8 +91,13 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
     }
   };
 
+  // Aplicar animação apenas durante execução e se o nó estiver ativo
+  const animationClass = isExecuting && isActive 
+    ? 'animate-pulse border-primary/60 shadow-lg shadow-primary/20' 
+    : '';
+
   return (
-    <div className="px-4 py-3 bg-card border-2 border-primary/20 rounded-lg min-w-[180px] shadow-lg">
+    <div className={`px-4 py-3 bg-card border-2 border-primary/20 rounded-lg min-w-[180px] shadow-lg transition-all duration-300 ${animationClass}`}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-5 h-5 ${getColor()}`} />
         <span className="font-medium text-sm">{data.label}</span>
@@ -121,7 +130,12 @@ export const AgentNode = memo(({ data }: NodeProps & { data: AgentNodeData }) =>
 });
 
 // Componente Nó de Dados
-export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id: string }) => {
+export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & { 
+  data: DataNodeData; 
+  id: string; 
+  isExecuting?: boolean; 
+  isActive?: boolean; 
+}) => {
   const [userInput, setUserInput] = useState(data.userInput || '');
   
   const getIcon = () => {
@@ -150,6 +164,11 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
     }
   };
 
+  // Aplicar animação apenas durante execução e se o nó estiver ativo
+  const animationClass = isExecuting && isActive 
+    ? 'animate-pulse border-primary/60 shadow-lg shadow-primary/20' 
+    : '';
+
   // Atualizar dados do nó quando o input muda
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -161,7 +180,7 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
   };
 
   return (
-    <div className="px-3 py-2 bg-card border border-border rounded-lg min-w-[180px] shadow-md">
+    <div className={`px-3 py-2 bg-card border border-border rounded-lg min-w-[180px] shadow-md transition-all duration-300 ${animationClass}`}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${getColor()}`} />
         <span className="font-medium text-sm">{data.label}</span>
@@ -244,7 +263,12 @@ export const DataNode = memo(({ data, id }: NodeProps & { data: DataNodeData; id
 });
 
 // Componente Nó de Lógica (If/Else)
-export const LogicNode = memo(({ data, id }: NodeProps & { data: LogicNodeData; id: string }) => {
+export const LogicNode = memo(({ data, id, isExecuting, isActive }: NodeProps & { 
+  data: LogicNodeData; 
+  id: string; 
+  isExecuting?: boolean; 
+  isActive?: boolean; 
+}) => {
   const [condition, setCondition] = useState(data.condition || '');
   
   const getIcon = () => {
@@ -271,6 +295,11 @@ export const LogicNode = memo(({ data, id }: NodeProps & { data: LogicNodeData; 
     }
   };
 
+  // Aplicar animação apenas durante execução e se o nó estiver ativo
+  const animationClass = isExecuting && isActive 
+    ? 'animate-pulse border-primary/60 shadow-lg shadow-primary/20' 
+    : '';
+
   // Atualizar condição quando muda
   const handleConditionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -284,7 +313,7 @@ export const LogicNode = memo(({ data, id }: NodeProps & { data: LogicNodeData; 
   const Icon = getIcon();
 
   return (
-    <div className={`px-3 py-2 border rounded-lg min-w-[180px] shadow-md ${getBgColor()}`}>
+    <div className={`px-3 py-2 border rounded-lg min-w-[180px] shadow-md transition-all duration-300 ${getBgColor()} ${animationClass}`}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${getColor()}`} />
         <span className="font-medium text-sm">{data.label}</span>
