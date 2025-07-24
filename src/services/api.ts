@@ -1,6 +1,6 @@
 // Configuração da API
 const getApiBaseUrl = () => {
-  return localStorage.getItem('backend_url') || import.meta.env.VITE_API_URL || 'http://200.98.64.133:5000/api';
+  return localStorage.getItem("backend_url") || "http://169.254.0.21:5000/api";
 };
 
 export interface FlowData {
@@ -378,20 +378,50 @@ class ApiService {
     });
   }
 
-  // Método para chat com agente Gemini
-  async chatWithGemini(
+  // Método para chat com agente OpenAI
+  async chatWithOpenAI(
     message: string,
     userId: string,
     sessionId?: string,
-    apiKey?: string
-  ): Promise<ApiResponse<{ response: string; session_id: string; timestamp: string }>> {
-    return this.request('/gemini/chat', {
+    apiKey?: string,
+    model?: string
+  ): Promise<ApiResponse<{ response: string; session_id: string; timestamp: string; model_used: string }>> {
+    return this.request('/openai/chat', {
       method: 'POST',
       body: JSON.stringify({
         message,
         user_id: userId,
         session_id: sessionId,
-        api_key: apiKey
+        api_key: apiKey,
+        model: model || 'gpt-3.5-turbo'
+      }),
+    });
+  }
+
+  // Método para obter resumo da conversa OpenAI
+  async getOpenAIConversationSummary(
+    userId: string,
+    sessionId: string
+  ): Promise<ApiResponse<any>> {
+    return this.request('/openai/conversation/summary', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: userId,
+        session_id: sessionId
+      }),
+    });
+  }
+
+  // Método para limpar conversa OpenAI
+  async clearOpenAIConversation(
+    userId: string,
+    sessionId: string
+  ): Promise<ApiResponse<any>> {
+    return this.request('/openai/conversation/clear', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: userId,
+        session_id: sessionId
       }),
     });
   }
