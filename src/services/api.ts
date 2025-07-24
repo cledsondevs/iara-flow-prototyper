@@ -1,6 +1,6 @@
 // Configuração da API
 const getApiBaseUrl = () => {
-  return localStorage.getItem("backend_url") || "http://169.254.0.21:5000/api";
+  return localStorage.getItem("backend_url") || "http://200.98.64.133:5000/api";
 };
 
 export interface FlowData {
