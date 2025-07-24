@@ -135,6 +135,8 @@ export const AgentsSection = () => {
                     <Button 
                       size="sm" 
                       className="btn-modern text-sm font-semibold focus-modern"
+                      onClick={() => window.location.href = 
+'/auth'}
                     >
                       Usar Agente
                     </Button>
@@ -149,6 +151,8 @@ export const AgentsSection = () => {
           <Button 
             size="lg" 
             className="btn-modern text-lg px-10 py-4 h-auto font-semibold focus-modern"
+            onClick={() => window.location.href = 
+'/auth'}
           >
             Criar Meu Primeiro Fluxo
           </Button>

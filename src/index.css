@@ -16,13 +16,10 @@ All colors MUST be HSL.
     --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-
-    --primary: 353 75% 50%; /* A vibrant red */
+    --popover-foreground: 240 10% 3.9%;    --primary: 353 75% 50%; /* A vibrant red */
     --primary-foreground: 0 0% 98%;
     --primary-hover: 353 75% 40%;
     --primary-light: 353 75% 95%;
-
     --secondary: 240 4% 96%;
     --secondary-foreground: 240 5% 64.9%;
 
