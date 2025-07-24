@@ -1,6 +1,6 @@
 // Configuração da API
 const getApiBaseUrl = () => {
-  return localStorage.getItem('backend_url') || import.meta.env.VITE_API_URL || 'http://200.98.64.133/api';
+  return localStorage.getItem('backend_url') || import.meta.env.VITE_API_URL || 'http://200.98.64.133:5000/api';
 };
 
 export interface FlowData {
