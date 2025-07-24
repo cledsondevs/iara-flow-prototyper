@@ -2,23 +2,12 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/844cb71a-0bde-4693-b715-1d05b2f0148b
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/844cb71a-0bde-4693-b715-1d05b2f0148b) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Follow these steps:
 
@@ -62,7 +51,6 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/844cb71a-0bde-4693-b715-1d05b2f0148b) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
 
@@ -85,9 +73,8 @@ Este projeto foi configurado para ser deployado manualmente em um servidor Ubunt
 
 1.  **Acessar o Servidor via SSH:**
     ```bash
-    ssh root@200.98.64.133
     ```
-    (Use a senha fornecida: `Bc180a?8`)
+    (Use a senha fornecida:
 
 2.  **Criar o diretório para o frontend (se não existir):**
     ```bash
@@ -138,7 +125,7 @@ Este projeto foi configurado para ser deployado manualmente em um servidor Ubunt
 5.  **No seu ambiente local, prepare o frontend:**
     Certifique-se de que a variável de ambiente `VITE_API_URL` no arquivo `.env` do seu projeto local esteja apontando para o IP do servidor:
     ```
-    VITE_API_URL=http://200.98.64.133:5000/api
+    VITE_API_URL=http://ip/api
     ```
     Instale as dependências e faça o build do projeto:
     ```bash
@@ -149,31 +136,11 @@ Este projeto foi configurado para ser deployado manualmente em um servidor Ubunt
 6.  **Enviar os arquivos buildados para o servidor:**
     A partir do diretório raiz do seu projeto local, use `scp` para copiar os arquivos da pasta `dist` para o servidor:
     ```bash
-    scp -r dist/* root@200.98.64.133:/var/www/html/
+    scp -r dist/* root@ip:/var/www/html/
     ```
-    (Será solicitada a senha do root: `Bc180a?8`)
+    (Será solicitada a senha do root: )
 
 ### Sincronização de Atualizações do Git com o Servidor:
-
-Para atualizar o frontend no servidor após novas alterações no repositório Git, siga estes passos:
-
-1.  **No seu ambiente local, puxe as últimas alterações do Git:**
-    ```bash
-    git pull origin main
-    ```
-    (Ou a branch que você estiver utilizando)
-
-2.  **Instale novas dependências (se houver) e faça o build do projeto novamente:**
-    ```bash
-    npm install
-    npm run build
-    ```
-
-3.  **Envie os arquivos buildados atualizados para o servidor:**
-    ```bash
-    scp -r dist/* root@200.98.64.133:/var/www/html/
-    ```
-    (Será solicitada a senha do root: `Bc180a?8`)
 
 Isso garantirá que a versão mais recente do seu frontend esteja sempre disponível no servidor.
 te
