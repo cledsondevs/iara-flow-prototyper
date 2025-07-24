@@ -11,7 +11,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;

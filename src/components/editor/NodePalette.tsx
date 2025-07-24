@@ -26,6 +26,21 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       }
     },
     {
+      id: 'openai-agent',
+      label: 'OpenAI Assistant',
+      icon: Bot,
+      description: 'Assistente OpenAI com memória',
+      color: 'text-emerald-600',
+      data: {
+        label: 'OpenAI Assistant',
+        agentType: 'openai_assistant',
+        provider: 'openai',
+        model: 'gpt-3.5-turbo',
+        temperature: 0.7,
+        instructions: 'Assistente OpenAI com capacidade de memória de longo prazo'
+      }
+    },
+    {
       id: 'langchain-agent',
       label: 'LangChain Agent',
       icon: FlaskConical,
