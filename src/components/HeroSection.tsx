@@ -31,6 +31,8 @@ export const HeroSection = () => {
             <Button 
               size="lg" 
               className="btn-modern text-lg px-10 py-4 h-auto font-semibold focus-modern"
+              onClick={() => window.location.href = 
+'/auth'}
             >
               Experimentar Grátis
             </Button>
@@ -38,6 +40,8 @@ export const HeroSection = () => {
               variant="outline" 
               size="lg"
               className="text-lg px-10 py-4 h-auto font-semibold border-2 hover:bg-primary/5 focus-modern transition-all duration-300"
+              onClick={() => window.location.href = 
+'/auth'}
             >
               Ver Demonstração
             </Button>
