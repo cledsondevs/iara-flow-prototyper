@@ -377,6 +377,24 @@ class ApiService {
       method: 'GET'
     });
   }
+
+  // Método para chat com agente Gemini
+  async chatWithGemini(
+    message: string,
+    userId: string,
+    sessionId?: string,
+    apiKey?: string
+  ): Promise<ApiResponse<{ response: string; session_id: string; timestamp: string }>> {
+    return this.request('/gemini/chat', {
+      method: 'POST',
+      body: JSON.stringify({
+        message,
+        user_id: userId,
+        session_id: sessionId,
+        api_key: apiKey
+      }),
+    });
+  }
 }
 
 export const apiService = new ApiService();
