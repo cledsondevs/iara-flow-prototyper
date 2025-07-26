@@ -1,8 +1,9 @@
 import { memo, useState, useEffect } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow, FlaskConical } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow, FlaskConical, Play } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { AutomaticTriggerNode } from './AutomaticTriggerNode';
 
 // Tipos de dados para os nós de agentes de IA
 export interface BaseNodeData extends Record<string, unknown> {
@@ -11,12 +12,13 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant' | 'gemini_agent';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant' | 'gemini_agent' | 'automatic_trigger';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
   maxTokens?: number;
   instructions?: string;
+  schedule?: string;
   // Email-specific properties
   toEmail?: string;
   subject?: string;
@@ -68,6 +70,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'email_sender': return MessageSquare; // Ícone para envio de e-mail
       case 'postgresql_memory': return Database; // Ícone para memória PostgreSQL
       case 'gemini_agent': return Brain; // Ícone para agente Gemini
+      case 'automatic_trigger': return Play; // Ícone para gatilho automático
       default: return Bot;
     }
   };
@@ -89,6 +92,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'email_sender': return 'text-teal-600'; // Cor para envio de e-mail
       case 'postgresql_memory': return 'text-purple-600'; // Cor para memória PostgreSQL
       case 'gemini_agent': return 'text-purple-600'; // Cor para agente Gemini
+      case 'automatic_trigger': return 'text-blue-500'; // Cor para gatilho automático
       default: return 'text-gray-600';
     }
   };
@@ -379,5 +383,16 @@ export const LogicNode = memo(({ data, id, isExecuting, isActive }: NodeProps & 
 
 AgentNode.displayName = 'AgentNode';
 DataNode.displayName = 'DataNode';
+LogicNode.displayName = 'LogicNode';
+AutomaticTriggerNode.displayName = 'AutomaticTriggerNode';
+
+
+
+
+
+
+
+
+
 
 

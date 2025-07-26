@@ -93,6 +93,7 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     <SelectItem value="memory_manager">Gerenciador de Memória</SelectItem>
                     <SelectItem value="email_sender">Envio de Email</SelectItem>
                     <SelectItem value="postgresql_memory">Memória PostgreSQL</SelectItem>
+                    <SelectItem value="automatic_trigger">Gatilho Automático</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -102,7 +103,8 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                agentData.agentType !== 'backlog_generator' && 
                agentData.agentType !== 'memory_manager' && 
                agentData.agentType !== 'email_sender' && 
-               agentData.agentType !== 'postgresql_memory' && (
+               agentData.agentType !== 'postgresql_memory' && 
+               agentData.agentType !== 'automatic_trigger' && (
                 <>
                   <div className="space-y-2">
                     <Label>Provedor de IA</Label>
@@ -164,7 +166,8 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                agentData.agentType !== 'backlog_generator' && 
                agentData.agentType !== 'memory_manager' && 
                agentData.agentType !== 'email_sender' && 
-               agentData.agentType !== 'postgresql_memory' && (
+               agentData.agentType !== 'postgresql_memory' && 
+               agentData.agentType !== 'automatic_trigger' && (
                 <>
                   <div className="space-y-2">
                     <Label>Temperatura: {agentData.temperature || 0.7}</Label>
@@ -329,6 +332,30 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                     />
                     <div className="text-xs text-muted-foreground">
                       Se preenchida, a query personalizada será usada no lugar dos campos acima
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {agentData.agentType === 'automatic_trigger' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Horário de Execução (Cron)</Label>
+                    <Input
+                      value={(agentData as any).schedule || ''}
+                      onChange={(e) => updateField('schedule', e.target.value)}
+                      placeholder="0 0 * * * (meia-noite diária)"
+                    />
+                    <div className="text-xs text-muted-foreground">
+                      Formato cron: segundos minutos horas dia mês dia-da-semana
+                      <br />
+                      Exemplos:
+                      <br />
+                      • 0 0 * * * - Meia-noite todos os dias
+                      <br />
+                      • 0 0 9 * * * - 9h da manhã todos os dias
+                      <br />
+                      • 0 0 9 * * 1-5 - 9h da manhã, segunda a sexta
                     </div>
                   </div>
                 </>

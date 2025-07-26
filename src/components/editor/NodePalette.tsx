@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow, FlaskConical, Mail } from 'lucide-react';
+import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Code, Plus, GitBranch, Workflow, FlaskConical, Mail, Play } from 'lucide-react';
 
 interface NodePaletteProps {
   onAddNode: (type: string, data: any) => void;
@@ -190,8 +190,21 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
         tableName: '',
         operation: 'SELECT',
         query: '',
-        fields: '*',
+        fields: '',
         conditions: ''
+      }
+    },
+    {
+      id: 'automatic-trigger-agent',
+      label: 'Gatilho Automático',
+      icon: Play,
+      description: 'Executa o fluxo automaticamente em um horário agendado',
+      color: 'text-blue-500',
+      data: {
+        label: 'Gatilho Automático',
+        agentType: 'automatic_trigger',
+        schedule: '', // Campo para o usuário definir o horário (cron expression)
+        instructions: 'Este agente inicia o fluxo automaticamente com base em um agendamento.'
       }
     }
   ];
@@ -407,4 +420,3 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
     </Card>
   );
 };
-
