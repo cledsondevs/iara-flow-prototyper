@@ -435,16 +435,10 @@ Este é um relatório automático gerado pelo sistema de análise de reviews.`,
       }),
     });
   }
-}
-
-export const apiService = new ApiService();
-export default apiService;
-
-
-  // Método para envio de e-mail genérico usando a nova API
+  //Método para envio do e-mail
   async sendEmail(recipient: string, subject: string, content: string): Promise<ApiResponse<any>> {
-    return this.request("/send-email", {
-      method: "POST",
+    return this.request('/send-email', {
+      method: 'POST',
       body: JSON.stringify({
         recipient,
         subject,
@@ -452,4 +446,16 @@ export default apiService;
       }),
     });
   }
+
+}
+
+export const apiService = new ApiService();
+export default apiService;
+
+
+
+
+
+
+
 
