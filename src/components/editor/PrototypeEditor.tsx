@@ -238,6 +238,16 @@ const PrototypeEditorInner = () => {
             result: result.data?.response || 'Resposta do Gemini recebida'
           })));
 
+          // Atualizar o nó Agent Output com a resposta do Gemini
+          const outputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'output');
+          if (outputNodes.length > 0) {
+            const outputNodeId = outputNodes[0].id;
+            updateNodeData(outputNodeId, { 
+              outputText: result.data.response || 'Resposta do Gemini',
+              hasResult: true 
+            });
+          }
+
           setFinalResult(result.data.response || 'Resposta do Gemini');
           setExecutionLogs(prev => [...prev, `Resposta do Gemini: ${result.data?.response}`]);
           setExecutionLogs(prev => [...prev, 'Chat com Gemini concluído com sucesso']);

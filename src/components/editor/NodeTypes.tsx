@@ -199,6 +199,14 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
         </div>
       )}
       
+      {data.dataType === 'output' && (
+        <div className="mt-2">
+          <div className="p-2 bg-muted rounded text-xs min-h-[60px] max-h-[120px] overflow-y-auto">
+            {(data as any).outputText || 'Aguardando resultado...'}
+          </div>
+        </div>
+      )}
+      
       {data.dataType === 'boolean' && (
         <div className="mt-2 flex items-center gap-2">
           <button
