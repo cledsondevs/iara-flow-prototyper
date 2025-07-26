@@ -12,17 +12,17 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
 
   const agentTemplates = [
     {
-      id: 'chatbot-agent',
-      label: 'Chat Assistant',
+      id: 'gemini-agent',
+      label: 'Agente Gemini',
       icon: MessageSquare,
-      description: 'Assistente conversacional',
+      description: 'Assistente conversacional Gemini',
       color: 'text-blue-600',
       data: {
-        label: 'Chat Assistant',
-        agentType: 'chatbot',
-        model: 'GPT-4',
+        label: 'Agente Gemini',
+        agentType: 'gemini_chatbot',
+        model: 'Gemini-1.5-Flash',
         temperature: 0.7,
-        instructions: 'Assistente conversacional para suporte ao cliente'
+        instructions: 'Assistente conversacional usando Google Gemini'
       }
     },
     {

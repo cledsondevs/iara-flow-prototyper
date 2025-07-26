@@ -222,6 +222,9 @@ const PrototypeEditorInner = () => {
     try {
       let result;
       
+      // Verificar se há agente Gemini no fluxo
+      const hasGeminiAgent = agentNodes.some(node => node.data.agentType === 'gemini_chatbot');
+      
       if (hasReviewCollector) {
         // Executar fluxo de review específico
         const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
@@ -247,6 +250,17 @@ const PrototypeEditorInner = () => {
         } else {
           throw new Error('Nó Email Sender não encontrado');
         }
+      } else if (hasGeminiAgent) {
+        // Executar fluxo com Gemini
+        const flowData = {
+          nodes,
+          edges,
+          exportedAt: new Date().toISOString()
+        };
+        
+        setExecutionLogs(prev => [...prev, `Executando fluxo com Agente Gemini`]);
+        setExecutionLogs(prev => [...prev, `Pergunta do usuário: ${userInput}`]);
+        result = await apiService.geminiExecuteFlowDirect(flowData, userInput as string, mockUserId);
       } else {
         // Executar fluxo genérico
         const flowData = {

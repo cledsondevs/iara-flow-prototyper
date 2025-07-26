@@ -187,6 +187,22 @@ class ApiService {
     });
   }
 
+  // Método para executar fluxo com Gemini diretamente
+  async geminiExecuteFlowDirect(
+    flowData: FlowData,
+    input: string = '',
+    userId: string
+  ): Promise<ApiResponse<ExecutionResult>> {
+    return this.request('/chat/gemini', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: input,
+        user_id: userId,
+        session_id: `session_${userId}_${Date.now()}`,
+      }),
+    });
+  }
+
   // Método para validar fluxo diretamente (sem salvar no DynamoDB)
   async validateFlowDirect(flowData: FlowData): Promise<
     ApiResponse<{ validation: { valid: boolean; errors: string[]; warnings: string[] } }>

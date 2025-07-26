@@ -297,7 +297,7 @@ export const FlowTemplates = ({ onLoadTemplate }: FlowTemplatesProps) => {
           type: 'agent',
           position: { x: 400, y: 100 },
           data: {
-            label: 'Chat Assistant',
+            label: 'Agente Gemini',
             agentType: 'chatbot',
             provider: 'openai',
             model: 'gpt-4',

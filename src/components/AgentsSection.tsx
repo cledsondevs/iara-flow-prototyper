@@ -18,7 +18,7 @@ import {
 const agents = [
   {
     icon: MessageCircle,
-    name: "Chat Assistant",
+    name: "Agente Gemini",
     description: "Assistente conversacional",
     details: "Agente especializado em conversas naturais e suporte ao cliente",
     category: "Conversação",
