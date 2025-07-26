@@ -41,6 +41,21 @@ export const NodePalette = ({ onAddNode }: NodePaletteProps) => {
       }
     },
     {
+      id: 'gemini-agent',
+      label: 'Agente Gemini',
+      icon: Brain,
+      description: 'Assistente conversacional usando Google Gemini',
+      color: 'text-purple-600',
+      data: {
+        label: 'Agente Gemini',
+        agentType: 'gemini_agent',
+        provider: 'gemini',
+        model: 'gemini-1.5-flash',
+        temperature: 0.7,
+        instructions: 'Assistente conversacional usando Google Gemini'
+      }
+    },
+    {
       id: 'langchain-agent',
       label: 'LangChain Agent',
       icon: FlaskConical,

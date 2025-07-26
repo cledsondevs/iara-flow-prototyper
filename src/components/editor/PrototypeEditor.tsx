@@ -200,12 +200,13 @@ const PrototypeEditorInner = () => {
     // Verificar se é um fluxo de review (contém Review Collector)
     const hasReviewCollector = agentNodes.some(node => node.data.agentType === 'review_collector');
     const hasEmailSender = agentNodes.some(node => node.data.agentType === 'email_sender');
+    const hasGeminiAgent = agentNodes.some(node => node.data.agentType === 'gemini_agent');
     
     // Buscar nós de input para obter entrada do usuário
     const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
     const userInput = inputNodes.length > 0 && inputNodes[0].data.userInput 
       ? inputNodes[0].data.userInput 
-      : "com.itau.investimentos"; // Valor padrão para testes
+      : "Olá, como você está?"; // Valor padrão para testes com Gemini
 
     // Mostrar steps iniciais
     const steps = agentNodes.map(node => ({
@@ -222,7 +223,33 @@ const PrototypeEditorInner = () => {
     try {
       let result;
       
-      if (hasReviewCollector) {
+      if (hasGeminiAgent) {
+        // Executar fluxo com Agente Gemini
+        setExecutionLogs(prev => [...prev, `Executando chat com Agente Gemini`]);
+        setExecutionLogs(prev => [...prev, `Mensagem do usuário: ${userInput}`]);
+        
+        result = await apiService.chatWithGemini(userInput as string, mockUserId);
+        
+        if (result.success && result.data) {
+          // Atualizar steps como sucesso
+          setExecutionSteps(prev => prev.map(step => ({
+            ...step,
+            status: 'success' as const,
+            result: result.data?.response || 'Resposta do Gemini recebida'
+          })));
+
+          setFinalResult(result.data.response || 'Resposta do Gemini');
+          setExecutionLogs(prev => [...prev, `Resposta do Gemini: ${result.data?.response}`]);
+          setExecutionLogs(prev => [...prev, 'Chat com Gemini concluído com sucesso']);
+          
+          toast({
+            title: "Chat concluído",
+            description: "Conversa com Agente Gemini realizada com sucesso!"
+          });
+        } else {
+          throw new Error(result.error || 'Erro na comunicação com Gemini');
+        }
+      } else if (hasReviewCollector) {
         // Executar fluxo de review específico
         const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
         const managerEmail = emailSenderNode?.data.toEmail || "cledson199@gmail.com"; // E-mail padrão fornecido

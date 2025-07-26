@@ -11,7 +11,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant' | 'gemini_agent';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
@@ -67,6 +67,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'memory_manager': return Database; // Ícone para gerenciador de memória
       case 'email_sender': return MessageSquare; // Ícone para envio de e-mail
       case 'postgresql_memory': return Database; // Ícone para memória PostgreSQL
+      case 'gemini_agent': return Brain; // Ícone para agente Gemini
       default: return Bot;
     }
   };
@@ -87,6 +88,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'memory_manager': return 'text-amber-600'; // Cor para gerenciador de memória
       case 'email_sender': return 'text-teal-600'; // Cor para envio de e-mail
       case 'postgresql_memory': return 'text-purple-600'; // Cor para memória PostgreSQL
+      case 'gemini_agent': return 'text-purple-600'; // Cor para agente Gemini
       default: return 'text-gray-600';
     }
   };
