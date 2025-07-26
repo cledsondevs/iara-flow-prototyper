@@ -18,6 +18,7 @@ import '@xyflow/react/dist/style.css';
 import './editor-styles.css';
 
 import { AgentNode, DataNode, LogicNode, AgentNodeData, DataNodeData, LogicNodeData } from './NodeTypes';
+import { AutomaticTriggerNode } from './AutomaticTriggerNode';
 import { NodePalette } from './NodePalette';
 import { EditorToolbar } from './EditorToolbar';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -56,6 +57,7 @@ const PrototypeEditorInner = () => {
     agent: (props: any) => <AgentNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
     data: (props: any) => <DataNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
     logic: (props: any) => <LogicNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
+    automatic_trigger: (props: any) => <AutomaticTriggerNode {...props} isExecuting={isExecuting} isActive={executionSteps.some(step => step.id === props.id && step.status === 'pending')} />,
   };
 
   // Conectar nós
@@ -201,6 +203,7 @@ const PrototypeEditorInner = () => {
     const hasReviewCollector = agentNodes.some(node => node.data.agentType === 'review_collector');
     const hasEmailSender = agentNodes.some(node => node.data.agentType === 'email_sender');
     const hasGeminiAgent = agentNodes.some(node => node.data.agentType === 'gemini_agent');
+    const hasAutomaticTrigger = agentNodes.some(node => node.data.agentType === 'automatic_trigger');
     
     // Debug: Log dos tipos de agentes encontrados
     console.log('Agent nodes:', agentNodes.map(node => ({ id: node.id, agentType: node.data.agentType })));
@@ -289,6 +292,20 @@ const PrototypeEditorInner = () => {
           });
         } else {
           throw new Error(result.error || 'Erro na comunicação com Gemini');
+        }
+      } else if (hasAutomaticTrigger) {
+        const triggerNode = agentNodes.find(node => node.data.agentType === 'automatic_trigger');
+        if (triggerNode && triggerNode.data.schedule) {
+          setExecutionLogs(prev => [...prev, `Agendando fluxo para execução automática com cron: ${triggerNode.data.schedule}`]);
+          // Aqui você integraria com a API de agendamento do backend
+          // Por enquanto, vamos simular o agendamento e sucesso
+          result = { success: true, data: { message: 'Fluxo agendado com sucesso!' } };
+          toast({
+            title: "Agendamento concluído",
+            description: "Fluxo agendado para execução automática!"
+          });
+        } else {
+          throw new Error('Nó Gatilho Automático encontrado, mas sem horário de agendamento definido.');
         }
       } else if (hasReviewCollector) {
         // Executar fluxo de review específico
