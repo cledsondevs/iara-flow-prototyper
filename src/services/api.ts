@@ -275,11 +275,21 @@ class ApiService {
   }
 
   async sendReportEmail(recipientEmail: string, reportData: any): Promise<ApiResponse<any>> {
-    return this.request("/review-agent/send-report-email", {
+    return this.request("/send-email", {
       method: "POST",
       body: JSON.stringify({
-        recipient_email: recipientEmail,
-        report_data: reportData,
+        recipient: recipientEmail,
+        subject: "Relatório de Reviews - " + (reportData.package_name || "App"),
+        content: `Relatório de análise de reviews:
+        
+Pacote: ${reportData.package_name || "N/A"}
+Reviews negativos: ${reportData.negative_reviews_count || 0}
+Principais temas: ${reportData.main_themes?.join(", ") || "N/A"}
+
+Sugestões:
+${reportData.suggestions?.map((s: string) => `- ${s}`).join("\n") || "Nenhuma sugestão disponível"}
+
+Este é um relatório automático gerado pelo sistema de análise de reviews.`,
       }),
     });
   }
@@ -429,4 +439,17 @@ class ApiService {
 
 export const apiService = new ApiService();
 export default apiService;
+
+
+  // Método para envio de e-mail genérico usando a nova API
+  async sendEmail(recipient: string, subject: string, content: string): Promise<ApiResponse<any>> {
+    return this.request("/send-email", {
+      method: "POST",
+      body: JSON.stringify({
+        recipient,
+        subject,
+        content,
+      }),
+    });
+  }
 

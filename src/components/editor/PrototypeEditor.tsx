@@ -231,6 +231,22 @@ const PrototypeEditorInner = () => {
         setExecutionLogs(prev => [...prev, `E-mail de destino: ${managerEmail}`]);
         
         result = await apiService.executeReviewFlow(userInput as string, managerEmail);
+      } else if (hasEmailSender) {
+        // Executar fluxo genérico com email_sender
+        const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
+        
+        if (emailSenderNode) {
+          const recipient = emailSenderNode.data.toEmail || '';
+          const subject = emailSenderNode.data.subject || '';
+          const content = emailSenderNode.data.emailBody || '';
+          
+          setExecutionLogs(prev => [...prev, `Enviando e-mail para: ${recipient}`]);
+          setExecutionLogs(prev => [...prev, `Assunto: ${subject}`]);
+          
+          result = await apiService.sendEmail(recipient, subject, content);
+        } else {
+          throw new Error('Nó Email Sender não encontrado');
+        }
       } else {
         // Executar fluxo genérico
         const flowData = {
