@@ -202,6 +202,10 @@ const PrototypeEditorInner = () => {
     const hasEmailSender = agentNodes.some(node => node.data.agentType === 'email_sender');
     const hasGeminiAgent = agentNodes.some(node => node.data.agentType === 'gemini_agent');
     
+    // Debug: Log dos tipos de agentes encontrados
+    console.log('Agent nodes:', agentNodes.map(node => ({ id: node.id, agentType: node.data.agentType })));
+    console.log('Has Gemini Agent:', hasGeminiAgent);
+    
     // Buscar nós de input para obter entrada do usuário
     const inputNodes = nodes.filter(node => node.type === 'data' && node.data.dataType === 'input');
     const userInput = inputNodes.length > 0 && inputNodes[0].data.userInput 
