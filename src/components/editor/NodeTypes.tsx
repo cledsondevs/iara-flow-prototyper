@@ -176,19 +176,6 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
     ? 'animate-pulse border-primary/60 shadow-lg shadow-primary/20' 
     : '';
 
-  // Atualizar dados do nó quando o input muda
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    // Limitar a 500 caracteres
-    if (value.length <= 500) {
-      setUserInput(value);
-      // Atualizar os dados do nó usando um evento customizado
-      window.dispatchEvent(new CustomEvent('updateNodeData', {
-        detail: { nodeId: id, updates: { userInput: value } }
-      }));
-    }
-  };
-
   return (
     <div className={`px-3 py-2 bg-card border border-border rounded-lg min-w-[220px] shadow-md transition-all duration-300 ${animationClass}`}>
       <div className="flex items-center gap-2 mb-2">
@@ -198,13 +185,9 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
       
       {data.dataType === 'input' && (
         <div className="mt-2">
-          <Textarea
-            placeholder="Digite sua mensagem aqui..."
-            value={userInput}
-            onChange={handleInputChange}
-            className="nodrag min-h-[80px] max-h-[120px] text-sm resize-none border-2 border-input focus:border-primary"
-            rows={3}
-          />
+          <div className="p-2 bg-muted rounded text-sm min-h-[60px] max-h-[100px] overflow-y-auto border">
+            {userInput || 'Digite sua mensagem no painel de propriedades...'}
+          </div>
           <div className="text-xs text-muted-foreground mt-1">
             {userInput.length}/500 caracteres
           </div>

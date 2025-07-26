@@ -372,6 +372,22 @@ export const PropertiesPanel = ({ node, onUpdateNode, onDeleteNode, onClose }: P
                 </div>
               )}
 
+              {dataData.dataType === 'input' && (
+                <div className="space-y-2">
+                  <Label>Conteúdo da Mensagem</Label>
+                  <Textarea
+                    value={(dataData as any).userInput || ''}
+                    onChange={(e) => updateField('userInput', e.target.value)}
+                    placeholder="Digite sua mensagem aqui..."
+                    className="min-h-[100px] max-h-[200px] resize-none"
+                    rows={4}
+                  />
+                  <div className="text-xs text-muted-foreground">
+                    {((dataData as any).userInput || '').length}/500 caracteres
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label>Formato</Label>
                 <Input
