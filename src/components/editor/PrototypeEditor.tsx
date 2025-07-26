@@ -254,6 +254,33 @@ const PrototypeEditorInner = () => {
 
           setFinalResult(result.data.response || 'Resposta do Gemini');
           setExecutionLogs(prev => [...prev, `Resposta do Gemini: ${result.data?.response}`]);
+          
+          // Verificar se há Email Sender conectado para enviar o output do Gemini
+          if (hasEmailSender) {
+            const emailSenderNode = agentNodes.find(node => node.data.agentType === 'email_sender');
+            
+            if (emailSenderNode) {
+              const recipient = emailSenderNode.data.toEmail || '';
+              const subject = emailSenderNode.data.subject || 'Resposta do Agente Gemini';
+              const geminiResponse = result.data.response || '';
+              
+              setExecutionLogs(prev => [...prev, `Enviando resposta do Gemini por e-mail para: ${recipient}`]);
+              setExecutionLogs(prev => [...prev, `Assunto: ${subject}`]);
+              
+              const emailResult = await apiService.sendEmail(recipient, subject, geminiResponse);
+              
+              if (emailResult.success) {
+                setExecutionLogs(prev => [...prev, 'E-mail enviado com sucesso!']);
+                toast({
+                  title: "E-mail enviado",
+                  description: "Resposta do Gemini enviada por e-mail com sucesso!"
+                });
+              } else {
+                setExecutionLogs(prev => [...prev, `Erro ao enviar e-mail: ${emailResult.error}`]);
+              }
+            }
+          }
+          
           setExecutionLogs(prev => [...prev, 'Chat com Gemini concluído com sucesso']);
           
           toast({
