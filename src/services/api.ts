@@ -171,23 +171,26 @@ class ApiService {
     return this.request(`/executions/${executionId}`);
   }
 
-  // Método para executar fluxo diretamente (sem salvar no DynamoDB)
+  // Método para executar fluxo diretamente 
   async executeFlowDirect(
     flowData: FlowData,
     input: string = '',
     userId: string
   ): Promise<ApiResponse<ExecutionResult>> {
-    return this.request('/flow/execute', {
+    return this.request('/v2/chat/gemini', {
       method: 'POST',
       body: JSON.stringify({
-        flow_data: flowData, // Mantido para compatibilidade, mas o backend usa apenas input e user_id
-        input: input,
+         message: "o que é isso ?"+input,
+        session: "this.session_id",
+        //flow_data: flowData, // Mantido para compatibilidade, mas o backend usa apenas input e user_id
         user_id: userId,
       }),
     });
   }
 
-  // Método para validar fluxo diretamente (sem salvar no DynamoDB)
+
+
+  // Método para validar fluxo diretamente 
   async validateFlowDirect(flowData: FlowData): Promise<
     ApiResponse<{ validation: { valid: boolean; errors: string[]; warnings: string[] } }>
   > {
@@ -274,26 +277,6 @@ class ApiService {
     });
   }
 
-  async sendReportEmail(recipientEmail: string, reportData: any): Promise<ApiResponse<any>> {
-    return this.request("/send-email", {
-      method: "POST",
-      body: JSON.stringify({
-        recipient: recipientEmail,
-        subject: "Relatório de Reviews - " + (reportData.package_name || "App"),
-        content: `Relatório de análise de reviews:
-        
-Pacote: ${reportData.package_name || "N/A"}
-Reviews negativos: ${reportData.negative_reviews_count || 0}
-Principais temas: ${reportData.main_themes?.join(", ") || "N/A"}
-
-Sugestões:
-${reportData.suggestions?.map((s: string) => `- ${s}`).join("\n") || "Nenhuma sugestão disponível"}
-
-Este é um relatório automático gerado pelo sistema de análise de reviews.`,
-      }),
-    });
-  }
-
   // Método para executar fluxo de review completo
   async executeReviewFlow(packageName: string, managerEmail?: string): Promise<ApiResponse<any>> {
     try {
@@ -345,8 +328,8 @@ Este é um relatório automático gerado pelo sistema de análise de reviews.`,
           critical_reviews: [],
           suggestions: ["Priorizar correção de bugs", "Melhorar interface do usuário"]
         };
-        
-        const emailResult = await this.sendReportEmail(managerEmail, reportData);
+
+        const emailResult = await this.sendEmail("cledsonborgesalves@gmail.com", "backlog review - agente",""+reportData);
         if (emailResult.success) {
           logs.push('E-mail enviado com sucesso');
         } else {
