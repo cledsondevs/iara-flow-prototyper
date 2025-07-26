@@ -171,7 +171,7 @@ class ApiService {
     return this.request(`/executions/${executionId}`);
   }
 
-  // Método para executar fluxo diretamente 
+  // Método para executar fluxo gemini
   async executeFlowDirect(
     flowData: FlowData,
     input: string = '',
