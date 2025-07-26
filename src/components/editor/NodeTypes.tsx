@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { Bot, Brain, MessageSquare, Database, Zap, Search, FileText, Image, Code, Cpu, GitBranch, Workflow, FlaskConical } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,7 +11,7 @@ export interface BaseNodeData extends Record<string, unknown> {
 }
 
 export interface AgentNodeData extends BaseNodeData {
-  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant';
+  agentType: 'chatbot' | 'analyzer' | 'retriever' | 'generator' | 'processor' | 'langchain_agent' | 'review_collector' | 'sentiment_analyzer' | 'backlog_generator' | 'memory_manager' | 'email_sender' | 'postgresql_memory' | 'openai_assistant' | 'gemini_agent';
   provider?: 'openai' | 'gemini';
   model?: string;
   temperature?: number;
@@ -67,6 +67,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'memory_manager': return Database; // Ícone para gerenciador de memória
       case 'email_sender': return MessageSquare; // Ícone para envio de e-mail
       case 'postgresql_memory': return Database; // Ícone para memória PostgreSQL
+      case 'gemini_agent': return Brain; // Ícone para agente Gemini
       default: return Bot;
     }
   };
@@ -87,6 +88,7 @@ export const AgentNode = memo(({ data, isExecuting, isActive }: NodeProps & {
       case 'memory_manager': return 'text-amber-600'; // Cor para gerenciador de memória
       case 'email_sender': return 'text-teal-600'; // Cor para envio de e-mail
       case 'postgresql_memory': return 'text-purple-600'; // Cor para memória PostgreSQL
+      case 'gemini_agent': return 'text-purple-600'; // Cor para agente Gemini
       default: return 'text-gray-600';
     }
   };
@@ -138,6 +140,11 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
 }) => {
   const [userInput, setUserInput] = useState(data.userInput || '');
   
+  // Sincronizar estado local com dados do nó
+  useEffect(() => {
+    setUserInput(data.userInput || '');
+  }, [data.userInput]);
+  
   const getIcon = () => {
     switch (data.dataType) {
       case 'input': return FileText;
@@ -169,18 +176,8 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
     ? 'animate-pulse border-primary/60 shadow-lg shadow-primary/20' 
     : '';
 
-  // Atualizar dados do nó quando o input muda
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setUserInput(value);
-    // Atualizar os dados do nó usando um evento customizado
-    window.dispatchEvent(new CustomEvent('updateNodeData', {
-      detail: { nodeId: id, updates: { userInput: value } }
-    }));
-  };
-
   return (
-    <div className={`px-3 py-2 bg-card border border-border rounded-lg min-w-[180px] shadow-md transition-all duration-300 ${animationClass}`}>
+    <div className={`px-3 py-2 bg-card border border-border rounded-lg min-w-[220px] shadow-md transition-all duration-300 ${animationClass}`}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${getColor()}`} />
         <span className="font-medium text-sm">{data.label}</span>
@@ -188,12 +185,20 @@ export const DataNode = memo(({ data, id, isExecuting, isActive }: NodeProps & {
       
       {data.dataType === 'input' && (
         <div className="mt-2">
-          <Textarea
-            placeholder="Digite sua mensagem aqui..."
-            value={userInput}
-            onChange={handleInputChange}
-            className="nodrag min-h-[60px] text-xs"
-          />
+          <div className="p-2 bg-muted rounded text-sm min-h-[60px] max-h-[100px] overflow-y-auto border">
+            {userInput || 'Digite sua mensagem no painel de propriedades...'}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {userInput.length}/500 caracteres
+          </div>
+        </div>
+      )}
+      
+      {data.dataType === 'output' && (
+        <div className="mt-2">
+          <div className="p-2 bg-muted rounded text-xs min-h-[60px] max-h-[120px] overflow-y-auto">
+            {(data as any).outputText || 'Aguardando resultado...'}
+          </div>
         </div>
       )}
       

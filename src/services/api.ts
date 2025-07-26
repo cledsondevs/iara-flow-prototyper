@@ -447,6 +447,22 @@ Este é um relatório automático gerado pelo sistema de análise de reviews.`,
     });
   }
 
+  // Método para chat com agente Gemini
+  async chatWithGemini(
+    message: string,
+    userId: string,
+    sessionId?: string
+  ): Promise<ApiResponse<{ response: string; session_id: string; timestamp: string; model: string; conversation_id: string }>> {
+    return this.request('/v2/chat/gemini', {
+      method: 'POST',
+      body: JSON.stringify({
+        message,
+        user_id: userId,
+        session_id: sessionId || `session_${Date.now()}`
+      }),
+    });
+  }
+
 }
 
 export const apiService = new ApiService();
